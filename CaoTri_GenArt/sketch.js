@@ -300,6 +300,10 @@ const EARTH_TEAR_SFX_PATHS = [
   "sound/face_mask_tear2.wav",
 ];
 const EARTH_TEAR_SFX_VOLUME = 1.0;
+const TEXT_POPUP_SFX_PATH = "../Hoang/designed-sounds/text-popup.wav";
+const TEXT_POPUP_SFX_VOLUME = 0.76;
+const TEXT_POPUP_SFX_POOL_SIZE = 3;
+const TEXT_POPUP_SFX_MIN_INTERVAL = 120;
 const PATTERN_HOVER_SFX_COOLDOWN = 180;
 
 // Cached random notch directions for the current render.
@@ -337,6 +341,7 @@ let patchZipSounds = [];
 let phaseOneZipSounds = [];
 let phaseThreePopSounds = [];
 let earthTearSounds = [];
+let textPopupSounds = [];
 let heartbeatSounds = [];
 let activeHeartbeatSound = null;
 let heartbeatPulseLevel = 0;
@@ -353,6 +358,8 @@ let postPatchTextIndex = 0;
 let activeTextBoxState = null;
 let previousTextBoxState = null;
 let textBoxTransitionStartTime = -Infinity;
+let textPopupSoundIndex = 0;
+let lastTextPopupSfxTime = -Infinity;
 let lastPatternHoverSfxTime = -Infinity;
 let hoveredPatternRect = null;
 let isDraggingScrollTracker = false;
@@ -451,6 +458,10 @@ function preload() {
   earthTearSounds = [];
   for (const soundPath of EARTH_TEAR_SFX_PATHS) {
     earthTearSounds.push(createNativeSound(soundPath));
+  }
+  textPopupSounds = [];
+  for (let i = 0; i < TEXT_POPUP_SFX_POOL_SIZE; i += 1) {
+    textPopupSounds.push(createNativeSound(TEXT_POPUP_SFX_PATH));
   }
   heartbeatSounds = [];
   for (const heartbeatPath of HEARTBEAT_PHASE_TRACKS) {
@@ -1236,6 +1247,56 @@ function playEarthTearSfx() {
   tearSound.play();
 }
 
+function isPreviewMode() {
+  return new URLSearchParams(window.location.search).get("preview") === "1";
+}
+
+function playParentTextPopupSfx() {
+  try {
+    if (window.parent && window.parent !== window && window.parent.SFX) {
+      window.parent.SFX.play("gartText");
+      return true;
+    }
+  } catch (error) {
+    return false;
+  }
+
+  return false;
+}
+
+function playTextPopupSfx() {
+  if (isPreviewMode()) {
+    return;
+  }
+
+  const now = millis();
+  if (now - lastTextPopupSfxTime < TEXT_POPUP_SFX_MIN_INTERVAL) {
+    return;
+  }
+
+  lastTextPopupSfxTime = now;
+
+  if (playParentTextPopupSfx()) {
+    return;
+  }
+
+  if (!textPopupSounds || textPopupSounds.length === 0) {
+    return;
+  }
+
+  const textSound = textPopupSounds[textPopupSoundIndex % textPopupSounds.length];
+  textPopupSoundIndex = (textPopupSoundIndex + 1) % textPopupSounds.length;
+  if (!textSound || !textSound.isLoaded()) {
+    return;
+  }
+
+  textSound.setVolume(TEXT_POPUP_SFX_VOLUME);
+  if (textSound.isPlaying()) {
+    textSound.stop();
+  }
+  textSound.play();
+}
+
 function setScrollHeight() {
   const totalHeight = getTotalPhasePixelHeight();
   document.body.style.height = `${totalHeight}px`;
@@ -1697,6 +1758,7 @@ function updateTextBoxTransitionState(currentState) {
     previousTextBoxState = activeTextBoxState;
     activeTextBoxState = currentState;
     textBoxTransitionStartTime = millis();
+    playTextPopupSfx();
     return;
   }
 
