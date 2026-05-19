@@ -1,0 +1,13 @@
+body {
+  margin: 0;
+  padding: 0;
+  /* Hide the browser scrollbar because sketch.js creates its own scroll feeling. */
+  overflow: hidden;
+  background-color: #000;
+  font-family: 'Caveat Brush', cursive;
+}
+
+canvas {
+  /* Remove the small default gap below canvas elements. */
+  display: block;
+}

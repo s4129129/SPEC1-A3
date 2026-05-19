@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SDG 13 Climate Action Mockup</title>
+
+    <!-- Match the Spec1 site typography; local Helvetica remains a fallback preload. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Caveat+Brush&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Averia+Sans+Libre:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="preload"
+      href="./Helvetica-Bold.ttf"
+      as="font"
+      type="font/ttf"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="./designed-sounds/Crowd.wav"
+      as="audio"
+      type="audio/wav"
+    />
+    <link
+      rel="preload"
+      href="./designed-sounds/fabric-colide.wav"
+      as="audio"
+      type="audio/wav"
+    />
+    <link
+      rel="preload"
+      href="./designed-sounds/fabric-colide-2.wav"
+      as="audio"
+      type="audio/wav"
+    />
+    <link
+      rel="preload"
+      href="./designed-sounds/fabric-dropped1.wav"
+      as="audio"
+      type="audio/wav"
+    />
+    <link
+      rel="preload"
+      href="./designed-sounds/fabric-dropped2.wav"
+      as="audio"
+      type="audio/wav"
+    />
+    <link
+      rel="preload"
+      href="./designed-sounds/pickup-clothing1.wav"
+      as="audio"
+      type="audio/wav"
+    />
+    <link
+      rel="preload"
+      href="./designed-sounds/pickup-clothing2.wav"
+      as="audio"
+      type="audio/wav"
+    />
+    <link
+      rel="preload"
+      href="./designed-sounds/puff-click.wav"
+      as="audio"
+      type="audio/wav"
+    />
+    <link
+      rel="preload"
+      href="./designed-sounds/puff-click2.wav"
+      as="audio"
+      type="audio/wav"
+    />
+    <link
+      rel="preload"
+      href="./designed-sounds/puff-click3.wav"
+      as="audio"
+      type="audio/wav"
+    />
+    <link
+      rel="preload"
+      href="./designed-sounds/text-popup.wav"
+      as="audio"
+      type="audio/wav"
+    />
+    <link
+      rel="preload"
+      href="./designed-sounds/walking.wav"
+      as="audio"
+      type="audio/wav"
+    />
+    <link
+      rel="preload"
+      href="./designed-sounds/walking2.wav"
+      as="audio"
+      type="audio/wav"
+    />
+    <link
+      rel="preload"
+      href="./designed-sounds/tension.wav"
+      as="audio"
+      type="audio/wav"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main class="page-shell">
+      <header class="hero">
+        <p class="eyebrow">United Nations SDG 13</p>
+        <h1>Climate Boid Response Field</h1>
+        <p class="lead">
+          Dynamic swarm motion visualizing collective climate behavior. Intro
+          pickups orbit the cursor on larger screens, while the control panel
+          tunes the full simulation.
+        </p>
+      </header>
+
+      <section class="layout-grid" aria-label="Mock website content">
+        <article class="panel info-panel">
+          <h2>Control The Simulation</h2>
+          <p>
+            SDG 13 calls for coordinated action. This boid field represents how
+            leaders and followers react together under changing conditions.
+          </p>
+          <ul>
+            <li>Intro pickups: cursor-following on larger screens</li>
+            <li>Autonomous leaders: triangle boids with flocking AI</li>
+            <li>Followers: random geometry orbiting each leader</li>
+          </ul>
+
+          <div
+            id="control-root"
+            class="controls-card"
+            aria-label="Boid controls"
+          ></div>
+        </article>
+
+        <article
+          id="p5-host"
+          class="panel canvas-panel"
+          aria-label="Interactive p5 canvas"
+        >
+          <!-- p5 canvas is injected into this wrapper -->
+          <div
+            id="p5-canvas-wrap"
+            role="img"
+            aria-label="Climate action p5 visual"
+          ></div>
+          <button
+            id="fullscreen-btn"
+            type="button"
+            aria-label="Toggle fullscreen canvas"
+          >
+            Fullscreen
+          </button>
+          <audio id="crowd-audio" preload="auto">
+            <source src="./designed-sounds/Crowd.wav" type="audio/wav" />
+          </audio>
+        </article>
+      </section>
+    </main>
+
+    <div id="sound-cluster" class="sound-cluster">
+      <button
+        id="music-toggle"
+        class="music-toggle"
+        type="button"
+        aria-label="Toggle organic background music"
+        data-state="off"
+      >
+        <span class="music-icon music-icon-off" aria-hidden="true">
+          <svg
+            viewBox="0 0 24 24"
+            width="20"
+            height="20"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.3"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M11 5 L6 9 H3 V15 H6 L11 19 Z" />
+            <line x1="17" y1="9" x2="22" y2="15" />
+            <line x1="22" y1="9" x2="17" y2="15" />
+          </svg>
+        </span>
+        <span class="music-icon music-icon-on" aria-hidden="true">
+          <svg
+            viewBox="0 0 24 24"
+            width="20"
+            height="20"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.3"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M11 5 L6 9 H3 V15 H6 L11 19 Z" />
+            <path d="M15.5 8.5 C17 10.2 17 13.8 15.5 15.5" />
+            <path d="M18.5 5.5 C21.3 8.7 21.3 15.3 18.5 18.5" />
+          </svg>
+        </span>
+        <span class="music-label">sound</span>
+      </button>
+
+      <div id="sound-panel" class="sound-panel" aria-hidden="true">
+        <label class="sound-panel-row" for="vol-music">
+          <span>music</span>
+          <input type="range" id="vol-music" min="0" max="100" value="0" />
+          <span class="vol-readout" id="vol-music-num">0</span>
+        </label>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.9.3/lib/p5.min.js"></script>
+    <script src="control.js"></script>
+    <script src="sketch.js"></script>
+    <script src="music.js"></script>
+  </body>
+</html>

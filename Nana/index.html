@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Thrift-N-Shift</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fruktur:ital@0;1&family=Monoton&family=Splash&family=Over+the+Rainbow&family=Kolker+Brush&family=Averia+Sans+Libre:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Akaya+Kanadaka&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="nanagenart.css">
+</head>
+<body>
+
+<!-- animated CRT noise layer -->
+<canvas id="noise-canvas"></canvas>
+<!-- extra scanlines layer for CRT feel -->
+<div class="scanlines"></div>
+
+<!-- ================ NAV ================ -->
+<nav class="topnav">
+  <a href="#page-landing" class="brand" aria-label="Return to landing page">T/N/S</a>
+  <!-- Hamburger toggle &mdash; visible only on mobile via CSS -->
+  <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+  <ul class="nav-list" id="nav-list">
+    <li><a href="#page-s1">Stage 1</a></li>
+    <li><a href="#page-s2">Stage 2</a></li>
+    <li><a href="#page-s3">Stage 3</a></li>
+    <li><a href="#page-s4">Stage 4</a></li>
+    <li><a href="#page-s5">Stage 5</a></li>
+    <li><a href="#page-about">About Us</a></li>
+  </ul>
+</nav>
+
+<!-- ================ PAGE STACK ================ -->
+<!-- Each page is fixed to the viewport. JS fades between them based on scroll. -->
+<div class="page-stack">
+
+  <!-- ======== LANDING ======== -->
+  <section class="page page-landing active" id="page-landing">
+
+    <div class="plaid-top" data-reveal="plaid"></div>
+    <div class="gradient-bridge"></div>
+
+    <!-- jagged color shapes -->
+    <div class="jag jag-yellow"  data-reveal="jag" data-delay="600"></div>
+    <div class="jag jag-pink"    data-reveal="jag" data-delay="750"></div>
+    <div class="jag jag-cyan"    data-reveal="jag" data-delay="900"></div>
+    <div class="jag jag-blue"    data-reveal="jag" data-delay="1050"></div>
+    <div class="jag jag-yellow2" data-reveal="jag" data-delay="1100"></div>
+
+    <!-- starbursts -->
+    <svg class="starburst sb1" data-reveal="prop" data-delay="1200" viewBox="0 0 100 100"><polygon points="50,0 55,40 100,50 55,60 50,100 45,60 0,50 45,40" fill="#FED602" stroke="#000" stroke-width="3"/></svg>
+    <svg class="starburst sb2" data-reveal="prop" data-delay="1350" viewBox="0 0 100 100"><polygon points="50,0 55,40 100,50 55,60 50,100 45,60 0,50 45,40" fill="#FE1595" stroke="#000" stroke-width="3"/></svg>
+    <svg class="starburst sb3" data-reveal="prop" data-delay="1500" viewBox="0 0 100 100"><polygon points="50,0 55,40 100,50 55,60 50,100 45,60 0,50 45,40" fill="#1DD9DB" stroke="#000" stroke-width="3"/></svg>
+    <svg class="starburst sb4" data-reveal="prop" data-delay="1650" viewBox="0 0 100 100"><polygon points="50,0 55,40 100,50 55,60 50,100 45,60 0,50 45,40" fill="#1722B0" stroke="#FED602" stroke-width="3"/></svg>
+
+    <!-- lightning bolts -->
+    <svg class="bolt b1" data-reveal="prop" data-delay="1100" viewBox="0 0 100 200"><polygon points="40,0 90,0 50,80 95,80 10,200 45,110 5,110" fill="#FED602" stroke="#000" stroke-width="4"/></svg>
+    <svg class="bolt b2" data-reveal="prop" data-delay="1250" viewBox="0 0 100 200"><polygon points="40,0 90,0 50,80 95,80 10,200 45,110 5,110" fill="#FE1595" stroke="#000" stroke-width="4"/></svg>
+    <svg class="bolt b3" data-reveal="prop" data-delay="1400" viewBox="0 0 100 200"><polygon points="40,0 90,0 50,80 95,80 10,200 45,110 5,110" fill="#1DD9DB" stroke="#000" stroke-width="4"/></svg>
+    <svg class="bolt b4" data-reveal="prop" data-delay="1550" viewBox="0 0 100 200"><polygon points="40,0 90,0 50,80 95,80 10,200 45,110 5,110" fill="#FED602" stroke="#000" stroke-width="4"/></svg>
+    <svg class="bolt b5" data-reveal="prop" data-delay="1700" viewBox="0 0 100 200"><polygon points="40,0 90,0 50,80 95,80 10,200 45,110 5,110" fill="#FE1595" stroke="#FED602" stroke-width="4"/></svg>
+    <svg class="bolt b6" data-reveal="prop" data-delay="1850" viewBox="0 0 100 200"><polygon points="40,0 90,0 50,80 95,80 10,200 45,110 5,110" fill="#1722B0" stroke="#FED602" stroke-width="4"/></svg>
+
+    <!-- CLOTH-PIECE SWATCHES
+         Rectangular pieces of cloth with stripes / checker / polka
+         dots in the generative-art palette (pink, cyan, yellow, blue,
+         white). Each has an offset black shadow box underneath. The
+         visual echoes the genart's two-pass render: shadow first,
+         coloured patterned shape on top. Positioned around the edges
+         of the landing so they never crowd the title middle band. -->
+    <div class="cloth-piece cloth-stripes cloth-pink   cp1" data-reveal="prop" data-delay="800"></div>
+    <div class="cloth-piece cloth-checker cloth-cyan   cp2" data-reveal="prop" data-delay="950"></div>
+    <div class="cloth-piece cloth-dots    cloth-yellow cp3" data-reveal="prop" data-delay="1100"></div>
+    <div class="cloth-piece cloth-checker cloth-blue   cp4" data-reveal="prop" data-delay="1250"></div>
+    <div class="cloth-piece cloth-stripes cloth-yellow cp5" data-reveal="prop" data-delay="1300"></div>
+    <div class="cloth-piece cloth-dots    cloth-pink   cp6" data-reveal="prop" data-delay="1450"></div>
+    <div class="cloth-piece cloth-checker cloth-white  cp7" data-reveal="prop" data-delay="1600"></div>
+
+    <!-- clothes / hang tags (DRAGGABLE) -->
+    <div class="clothes-tag tag-1 draggable" data-reveal="scrap" data-delay="1800">
+      <div class="tag-hole"></div>
+      <div class="tag-content"><span>SIZE</span><strong>M</strong></div>
+    </div>
+    <div class="clothes-tag tag-2 draggable" data-reveal="scrap" data-delay="1950">
+      <div class="tag-hole"></div>
+      <div class="tag-content"><span>SDG&middot;13</span><strong>$0.00</strong><em>re&middot;use</em></div>
+    </div>
+    <div class="clothes-tag tag-3 draggable" data-reveal="scrap" data-delay="2100">
+      <div class="tag-hole"></div>
+      <div class="tag-content"><strong>Vintage</strong><em>2026</em></div>
+    </div>
+    <div class="clothes-tag tag-4 draggable" data-reveal="scrap" data-delay="2250">
+      <div class="tag-hole"></div>
+      <div class="tag-content"><span>Vintage</span><strong>Find</strong></div>
+    </div>
+
+    <!-- newsprint scraps (DRAGGABLE) -->
+    <div class="scrap s1 draggable" data-reveal="scrap" data-delay="1600">CLIMATE // EMERGENCY DISPATCH &mdash; volume VII. THE THRIFT MOVEMENT GAINS MOMENTUM - Save the planet.</div>
+    <div class="scrap s2 draggable" data-reveal="scrap" data-delay="1750">57.1 GIGATONS. a record we never wanted. scientists warn &mdash; the window is CLOSING fast.</div>
+    <div class="scrap s3 draggable" data-reveal="scrap" data-delay="1900">wear it twice. wear it thrice. the planet keeps the receipt.</div>
+    <div class="scrap s4 draggable" data-reveal="scrap" data-delay="2050">Let's go thrifting!</div>
+    <div class="scrap s5 draggable" data-reveal="scrap" data-delay="2200">re &middot; wear &middot; re &middot; use &middot; re &middot; volt</div>
+    <div class="scrap s6 draggable" data-reveal="scrap" data-delay="2350">FAST FASHION? &mdash; no. slow it down.</div>
+
+    <!-- tape -->
+    <div class="tape t1" data-reveal="prop" data-delay="1800"></div>
+    <div class="tape t2" data-reveal="prop" data-delay="1950"></div>
+    <div class="tape t3" data-reveal="prop" data-delay="2100"></div>
+    <div class="tape t4" data-reveal="prop" data-delay="2250"></div>
+    <div class="tape t5" data-reveal="prop" data-delay="2400"></div>
+
+    <!-- spray splatters -->
+    <svg class="spray sp1" data-reveal="prop" data-delay="1000" viewBox="0 0 200 200"><g fill="#FE1595"><circle cx="20" cy="40" r="3"/><circle cx="55" cy="25" r="5"/><circle cx="90" cy="50" r="2"/><circle cx="130" cy="30" r="4"/><circle cx="160" cy="70" r="3"/><circle cx="40" cy="90" r="6"/><circle cx="100" cy="100" r="2"/><circle cx="150" cy="120" r="5"/><circle cx="30" cy="150" r="3"/><circle cx="80" cy="170" r="4"/><circle cx="120" cy="160" r="2"/><circle cx="180" cy="180" r="3"/></g></svg>
+    <svg class="spray sp2" data-reveal="prop" data-delay="1150" viewBox="0 0 200 200"><g fill="#1722B0"><circle cx="30" cy="30" r="4"/><circle cx="70" cy="50" r="2"/><circle cx="110" cy="25" r="5"/><circle cx="150" cy="60" r="3"/><circle cx="40" cy="100" r="3"/><circle cx="90" cy="120" r="6"/><circle cx="140" cy="110" r="2"/><circle cx="170" cy="140" r="4"/><circle cx="50" cy="170" r="3"/></g></svg>
+    <svg class="spray sp3" data-reveal="prop" data-delay="1300" viewBox="0 0 200 200"><g fill="#FED602"><circle cx="30" cy="50" r="5"/><circle cx="70" cy="30" r="3"/><circle cx="120" cy="60" r="4"/><circle cx="160" cy="40" r="2"/><circle cx="50" cy="110" r="6"/><circle cx="100" cy="130" r="3"/><circle cx="150" cy="150" r="4"/><circle cx="30" cy="170" r="2"/><circle cx="90" cy="180" r="5"/></g></svg>
+    <svg class="spray sp4" data-reveal="prop" data-delay="1450" viewBox="0 0 200 200"><g fill="#000"><circle cx="20" cy="50" r="2"/><circle cx="60" cy="30" r="3"/><circle cx="100" cy="60" r="2"/><circle cx="140" cy="30" r="4"/><circle cx="50" cy="100" r="2"/><circle cx="90" cy="130" r="3"/><circle cx="140" cy="110" r="2"/><circle cx="30" cy="160" r="3"/><circle cx="90" cy="180" r="2"/><circle cx="160" cy="170" r="2"/></g></svg>
+
+    <!-- exclaim -->
+    <div class="exclaim e1" data-reveal="prop" data-delay="2100">!</div>
+    <div class="exclaim e2" data-reveal="prop" data-delay="2250">?</div>
+    <div class="exclaim e3" data-reveal="prop" data-delay="2400">!</div>
+    <div class="exclaim e4" data-reveal="prop" data-delay="2550">!?</div>
+
+    <!-- arrows -->
+    <svg class="arrow-deco a1" data-reveal="prop" data-delay="2000" viewBox="0 0 100 40"><polygon points="0,15 70,15 70,0 100,20 70,40 70,25 0,25" fill="#FE1595" stroke="#000" stroke-width="3"/></svg>
+    <svg class="arrow-deco a2" data-reveal="prop" data-delay="2150" viewBox="0 0 100 40"><polygon points="0,15 70,15 70,0 100,20 70,40 70,25 0,25" fill="#1DD9DB" stroke="#000" stroke-width="3"/></svg>
+    <svg class="arrow-deco a3" data-reveal="prop" data-delay="2300" viewBox="0 0 100 40"><polygon points="0,15 70,15 70,0 100,20 70,40 70,25 0,25" fill="#FED602" stroke="#000" stroke-width="3"/></svg>
+
+    <!-- barcodes (DRAGGABLE) -->
+    <div class="barcode bc1 draggable" data-reveal="prop" data-delay="2350">
+      <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+      <div class="barcode-label">SDG&middot;13 / 2026</div>
+    </div>
+    <div class="barcode bc2 draggable" data-reveal="prop" data-delay="2500">
+      <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+      <div class="barcode-label">RE&middot;USE &middot; 001</div>
+    </div>
+
+    <!-- polaroid removed at user's request (had "THRIFT &middot; CULTURE" caption) -->
+
+    <!-- ticket stub (DRAGGABLE) -->
+    <div class="ticket tk1 draggable" data-reveal="prop" data-delay="2700">
+      <div class="ticket-num">No. 013</div>
+      <div class="ticket-txt">ADMIT &middot; ONE<br>CLIMATE&middot;ACTION</div>
+    </div>
+
+    <!-- stamp marks -->
+    <div class="stamp st1" data-reveal="prop" data-delay="2250">APPROVED<br><span>&middot;2026&middot;</span></div>
+    
+
+    <!-- paper pins -->
+    <div class="paper-pin pin1" data-reveal="prop" data-delay="2100"></div>
+    <div class="paper-pin pin2" data-reveal="prop" data-delay="2250"></div>
+    <div class="paper-pin pin3" data-reveal="prop" data-delay="2400"></div>
+    <div class="paper-pin pin4" data-reveal="prop" data-delay="2550"></div>
+    <div class="paper-pin pin5" data-reveal="prop" data-delay="2700"></div>
+
+    <!-- CDs -->
+    <div class="cd cd1 draggable" data-reveal="prop" data-delay="2300">
+      <div class="cd-inner"></div>
+      <div class="cd-center"></div>
+      <div class="cd-hole"></div>
+    </div>
+    <div class="cd cd2 draggable" data-reveal="prop" data-delay="2450">
+      <div class="cd-inner"></div>
+      <div class="cd-center"></div>
+      <div class="cd-hole"></div>
+    </div>
+
+    <!-- Cassettes -->
+    <div class="cassette cs1 draggable" data-reveal="prop" data-delay="2500">
+      <div class="cassette-label">SDG &middot; 13</div>
+      <div class="cassette-reels">
+        <div class="reel"></div>
+        <div class="reel"></div>
+      </div>
+    </div>
+    <div class="cassette cs2 draggable" data-reveal="prop" data-delay="2650">
+      <div class="cassette-label">Lets &middot; Act</div>
+      <div class="cassette-reels">
+        <div class="reel"></div>
+        <div class="reel"></div>
+      </div>
+    </div>
+
+    <!-- Music notes -->
+    <div class="music-note mn1" data-reveal="prop" data-delay="2150">&#9834;</div>
+    <div class="music-note mn2" data-reveal="prop" data-delay="2300">&#9835;</div>
+    <div class="music-note mn3" data-reveal="prop" data-delay="2450">&#9833;</div>
+    <div class="music-note mn4" data-reveal="prop" data-delay="2600">&#9836;</div>
+    <div class="music-note mn5" data-reveal="prop" data-delay="2750">&#9834;</div>
+
+    <!-- Safety pins / clothes pins -->
+    <svg class="safety-pin sp-a" data-reveal="prop" data-delay="2200" viewBox="0 0 100 40">
+      <path d="M10 20 Q10 5 25 5 L75 5 Q90 5 90 20 Q90 35 75 35 L20 35" fill="none" stroke="#000" stroke-width="3"/>
+      <circle cx="10" cy="20" r="6" fill="#FED602" stroke="#000" stroke-width="2"/>
+      <line x1="16" y1="20" x2="88" y2="32" stroke="#000" stroke-width="2.5"/>
+    </svg>
+    <svg class="safety-pin sp-b" data-reveal="prop" data-delay="2400" viewBox="0 0 100 40">
+      <path d="M10 20 Q10 5 25 5 L75 5 Q90 5 90 20 Q90 35 75 35 L20 35" fill="none" stroke="#000" stroke-width="3"/>
+      <circle cx="10" cy="20" r="6" fill="#FE1595" stroke="#000" stroke-width="2"/>
+      <line x1="16" y1="20" x2="88" y2="32" stroke="#000" stroke-width="2.5"/>
+    </svg>
+
+    <!-- TITLE -->
+    <div class="title-wrap">
+      <div class="title-stage">
+        <div class="word thrift" id="word-thrift"></div>
+        <div class="word n"      id="word-n"></div>
+        <div class="word shift"  id="word-shift"></div>
+      </div>
+    </div>
+
+    <!-- SDG callout &mdash; climate action badge + call to action -->
+    <div class="sdg-callout" data-reveal="prop" data-delay="2500">
+      <span class="sdg-badge">SDG 13 &middot; CLIMATE ACTION</span>
+      <span class="cta-line">Let's <em>shift</em> our habits and go thrift!</span>
+    </div>
+
+    <!-- scroll cue -->
+    <div class="scroll-cue" data-reveal="prop" data-delay="2700">
+      scroll down<br>
+      <span class="arrow">&#9660; &#9660; &#9660;</span>
+    </div>
+  </section>
+
+  <!-- ======== STAGE 1 &mdash; Overconsumption / Purchasing habit ======== -->
+  <section class="page page-section" id="page-s1" data-page-color="white">
+    <div class="section-deco">
+      <svg style="position:absolute;top:10%;right:5%;width:180px;" viewBox="0 0 100 200"><polygon points="40,0 90,0 50,80 95,80 10,200 45,110 5,110" fill="#FE1595" stroke="#000" stroke-width="4"/></svg>
+      <div class="stripe" style="top:30%;left:-10%;width:40%;transform:rotate(-8deg);"></div>
+      <div class="blob" style="bottom:-10%;left:-5%;background:var(--cyan);clip-path:polygon(20% 0%,80% 5%,100% 40%,90% 80%,60% 100%,20% 90%,0% 60%,10% 20%);"></div>
+      <div class="halftone" style="top:15%;left:20%;width:150px;height:150px;"></div>
+      <div class="halftone" style="bottom:20%;right:15%;width:120px;height:120px;"></div>
+    </div>
+    <div class="section-inner">
+      <h2>OVERCONSUMPTION /<br>PURCHASING HABIT</h2>
+      <div class="section-content">
+        Overconsumption has shifted clothing from a necessity into an engine of climate change.<br><br>
+        Research confirms that tonnes of annual textile waste makes the fashion industry responsible for roughly <strong>8&ndash;10%</strong> of global carbon emissions <span class="cite">(Niinimaki et al. 2020)</span>.<br><br>
+        In America specifically, textiles represent approximately <strong>5.8%</strong> of all municipal solid waste in the United States. In 1960, this figure was significantly lower; the volume has grown from <strong>1.7 million tons</strong> to over <strong>17 million tons</strong> annually as "trend chasing" became a consumer habit <span class="cite">(Environmental Protection Agency 2023)</span>.<br><br>
+        By prioritizing trends and cost over sustainability, modern consumer culture has become a deadly agent of climate change.
+      </div>
+
+      <div class="genart-card stage-art-card" data-stage-art-src="../Hoang/genart.html" data-stage-art-title="OVERCONSUMPTION / PURCHASING HABIT">
+        <div class="genart-card-head">
+          <span><span class="dot"></span>OVERCONSUMPTION / PURCHASING HABIT</span>
+          <button class="genart-zoom stage-art-zoom" type="button" aria-label="Open Puff fullscreen experience">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M15 3h6v6"/>
+              <path d="M9 21H3v-6"/>
+              <path d="M21 3l-7 7"/>
+              <path d="M3 21l7-7"/>
+            </svg>
+            EXPAND
+          </button>
+        </div>
+        <div class="genart-card-body stage-art-card-body">
+          <iframe data-src="../Hoang/genart.html" title="Puff generative art preview" loading="lazy"></iframe>
+          <button class="stage-art-open-hit" type="button" aria-label="Open Puff fullscreen experience"></button>
+        </div>
+        <div class="genart-card-caption">
+          Is having more always better?
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======== STAGE 2 &mdash; Production ======== -->
+  <section class="page page-section" id="page-s2" data-page-color="yellow">
+    <div class="section-deco">
+      <svg style="position:absolute;top:8%;left:6%;width:140px;transform:rotate(20deg);" viewBox="0 0 100 200"><polygon points="40,0 90,0 50,80 95,80 10,200 45,110 5,110" fill="#000" stroke="#FE1595" stroke-width="4"/></svg>
+      <div class="stripe" style="bottom:15%;right:-10%;width:50%;transform:rotate(10deg);"></div>
+      <div class="blob" style="top:-8%;right:-5%;background:var(--pink);clip-path:polygon(10% 20%,50% 0,90% 15%,100% 50%,85% 90%,40% 100%,10% 80%,0% 40%);"></div>
+      <div class="halftone" style="top:40%;left:10%;width:140px;height:140px;"></div>
+    </div>
+    <div class="section-inner">
+      <h2>PRODUCTION</h2>
+      <div class="section-content">
+        <h3>The Invisible Threat: Microplastics</h3>
+        <strong>The Global Infiltration: A World Pre-Polluted</strong><br>
+        Microplastics are light enough to be carried by wind, meaning we inhale synthetic fibers from our clothes every day, even in remote environments <span class="cite">(Kalogerakis 2025)</span>. Once shed from polyester or nylon garments during washing, these fibers enter the water cycle, where they are ingested by plankton and can bioaccumulate through the seafood and crops we consume. Current estimates suggest adults may ingest or inhale the equivalent of one credit card's worth of plastic every single week <span class="cite">(Savchuk 2025)</span>.<br><br>
+        <strong>The Climate Feedback Loop: Disruption of the Carbon Pump</strong><br>
+        Microplastics can impair the ability of phytoplankton to photosynthesize, reducing the amount of CO&#8322; the ocean can absorb from the atmosphere <span class="cite">(Moon 2025)</span>. When zooplankton ingest plastic fibers, their waste becomes more buoyant. Instead of sinking and trapping carbon on the seafloor, this waste remains near the surface, releasing carbon back into the atmosphere <span class="cite">(Estrela 2025)</span>.<br><br>
+        <strong>Breaking the Cycle: The Power of Secondhand</strong><br>
+        Synthetic fiber production is fossil-fuel intensive; buying secondhand avoids the greenhouse gas emissions associated with creating new polyester <span class="cite">(Dennings 2025)</span>. New synthetic clothes shed the highest concentration of microplastics during their first few washes, while secondhand items have often already undergone those initial high-shed cycles.
+      </div>
+
+      <div class="genart-card stage-art-card" data-stage-art-src="../Luke/index.html" data-stage-art-title="PRODUCTION">
+        <div class="genart-card-head">
+          <span><span class="dot"></span>PRODUCTION</span>
+          <button class="genart-zoom stage-art-zoom" type="button" aria-label="Open Luke fullscreen experience">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M15 3h6v6"/>
+              <path d="M9 21H3v-6"/>
+              <path d="M21 3l-7 7"/>
+              <path d="M3 21l7-7"/>
+            </svg>
+            EXPAND
+          </button>
+        </div>
+        <div class="genart-card-body stage-art-card-body">
+          <iframe data-src="../Luke/index.html" title="Luke generative art preview" loading="lazy"></iframe>
+          <button class="stage-art-open-hit" type="button" aria-label="Open Luke fullscreen experience"></button>
+        </div>
+        <div class="genart-card-caption">
+          Are we truly safe from microplastics?
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======== STAGE 3 &mdash; Waste Management ======== -->
+  <section class="page page-section" id="page-s3" data-page-color="cyan">
+    <div class="section-deco">
+      <svg style="position:absolute;bottom:10%;left:5%;width:160px;transform:rotate(-25deg);" viewBox="0 0 100 200"><polygon points="40,0 90,0 50,80 95,80 10,200 45,110 5,110" fill="#FED602" stroke="#000" stroke-width="4"/></svg>
+      <div class="stripe" style="top:25%;right:-10%;width:40%;transform:rotate(-5deg);"></div>
+      <div class="blob" style="bottom:-8%;right:-5%;background:var(--yellow);clip-path:polygon(5% 30%,40% 0,80% 10%,100% 45%,90% 85%,50% 100%,15% 90%,0% 60%);"></div>
+      <div class="halftone" style="top:30%;right:25%;width:130px;height:130px;"></div>
+    </div>
+    <div class="section-inner">
+      <h2>WASTE<br>MANAGEMENT</h2>
+      <div class="section-content">
+        <h3>A Broken System</h3>
+        <ul>
+          <li>Only <strong>1%</strong> of textiles are recycled back into clothing <span class="cite">(Rawshot 2026)</span>.</li>
+          <li>Synthetic blends like cotton-polyester <em>can't</em> be efficiently separated or recycled <span class="cite">(Arisa 2025)</span>.</li>
+          <li>Up to <strong>40%</strong> of clothing "donated" to the Global South is trash that lands in foreign landfills <span class="cite">(Schirrer 2026)</span>.</li>
+        </ul>
+
+        <h3>By the Numbers</h3>
+        <ul>
+          <li>One cotton t-shirt = <strong>2,700 litres</strong> of water <span class="cite">(Earth.Org 2026)</span>.</li>
+          <li>Textile dyeing causes <strong>20%</strong> of global industrial water pollution <span class="cite">(Mizrachi &amp; Sharon 2025)</span>.</li>
+          <li><strong>85%</strong> of textiles are thrown out yearly; polyester takes 200+ years to decompose <span class="cite">(Roadrunner 2021)</span>.</li>
+          <li><strong>500,000 tons</strong> of microplastics shed into oceans from synthetic clothes each year <span class="cite">(Earth.Org 2026)</span>.</li>
+        </ul>
+
+        <h3>Why We Keep Buying</h3>
+        <ul>
+          <li>Clothing consumption is up <em>400%</em> in two decades <span class="cite">(Earth.Org 2026)</span>.</li>
+          <li>Items are worn <em>under 7 times</em> before being tossed <span class="cite">(Earth.Org 2026)</span>.</li>
+          <li><em>55% of Gen Z</em> uses Buy Now Pay Later for ultra-fast fashion <span class="cite">(Akepa 2026)</span>.</li>
+        </ul>
+
+        <h3>Why Secondhand Works</h3>
+        <ul>
+          <li>Wearing a garment <em>9 extra months</em> cuts its footprint by 20&ndash;30% <span class="cite">(WRAP 2023)</span>.</li>
+          <li>One used item saves <em>25 lbs</em> of carbon on average <span class="cite">(Reinhart 2026)</span>.</li>
+          <li>A secondhand cotton shirt saves <strong>2,700 litres</strong> of water <span class="cite">(Earth.Org 2026)</span>.</li>
+          <li>Thrifting builds a circular mindset, breaking the disposable habit <span class="cite">(MacArthur n.d.)</span>.</li>
+        </ul>
+      </div>
+
+      <!-- ===== GENERATIVE ART PREVIEW CARD ===== -->
+      <div class="genart-card">
+        <div class="genart-card-head">
+          <span><span class="dot"></span>WASTE MANAGEMENT / CLIMATE DAMAGE</span>
+          <button id="genart-zoom" class="genart-zoom" aria-label="Open fullscreen experience">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M15 3h6v6"/>
+              <path d="M9 21H3v-6"/>
+              <path d="M21 3l-7 7"/>
+              <path d="M3 21l7-7"/>
+            </svg>
+            EXPAND
+          </button>
+        </div>
+        <div class="genart-card-body" id="genart-card-body">
+          <canvas id="genart-preview-canvas"></canvas>
+        </div>
+        <div class="genart-card-caption">
+          Can a world forced to wear the waste of fast fashion ever regain its color?
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ======== STAGE 4 &mdash; Transportation ======== -->
+  <section class="page page-section" id="page-s4" data-page-color="pink">
+    <div class="section-deco">
+      <svg style="position:absolute;top:12%;right:8%;width:170px;transform:rotate(15deg);" viewBox="0 0 100 200"><polygon points="40,0 90,0 50,80 95,80 10,200 45,110 5,110" fill="#1DD9DB" stroke="#000" stroke-width="4"/></svg>
+      <div class="stripe" style="bottom:20%;left:-10%;width:45%;transform:rotate(8deg);"></div>
+      <div class="blob" style="top:-8%;left:-5%;background:var(--blue);clip-path:polygon(15% 10%,60% 0,95% 20%,100% 55%,80% 95%,30% 100%,5% 75%,10% 35%);"></div>
+      <div class="halftone" style="bottom:25%;right:10%;width:140px;height:140px;"></div>
+    </div>
+    <div class="section-inner">
+      <h2>TRANSPORTATION</h2>
+      <div class="section-content">
+        Fast fashion depends on constant, high-speed global shipments of goods to maintain rapid turnover, which places significant strain on the environment.<br><br>
+        From raw material sourcing to manufacturing to final delivery, the constant movement of fast fashion garments majorly increases emissions, especially if companies favour air transport for speed. Global fashion is responsible for around <strong>10%</strong> of total carbon emissions, with transportation playing a major role in that footprint <span class="cite">(United Nations Environment Programme 2023)</span>.<br><br>
+        Some studies show that production and transport can account for up to <strong>91%</strong> of a garment's total emissions, depending on the product lifecycle <span class="cite">(MDPI 2024)</span>.<br><br>
+        Transportation is often invisible to consumers&mdash;yet it remains one of the largest hidden contributors to fast fashion's environmental impact. The faster clothes move, the higher the environmental cost.
+      </div>
+
+      <div class="genart-card stage-art-card" data-stage-art-src="../Harp/Code/index.html" data-stage-art-title="TRANSPORTATION">
+        <div class="genart-card-head">
+          <span><span class="dot"></span>TRANSPORTATION</span>
+          <button class="genart-zoom stage-art-zoom" type="button" aria-label="Open Harp fullscreen experience">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M15 3h6v6"/>
+              <path d="M9 21H3v-6"/>
+              <path d="M21 3l-7 7"/>
+              <path d="M3 21l7-7"/>
+            </svg>
+            EXPAND
+          </button>
+        </div>
+        <div class="genart-card-body stage-art-card-body">
+          <iframe data-src="../Harp/Code/index.html" title="Harp generative art preview" loading="lazy"></iframe>
+          <button class="stage-art-open-hit" type="button" aria-label="Open Harp fullscreen experience"></button>
+        </div>
+        <div class="genart-card-caption">
+          Every flight fades from view&mdash;but does its impact ever truly vanish?
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======== STAGE 5 &mdash; Thrifting / Secondhand ======== -->
+  <section class="page page-section" id="page-s5" data-page-color="black">
+    <div class="section-deco">
+      <svg style="position:absolute;top:10%;left:10%;width:200px;transform:rotate(-10deg);" viewBox="0 0 100 200"><polygon points="40,0 90,0 50,80 95,80 10,200 45,110 5,110" fill="#FE1595" stroke="#FED602" stroke-width="4"/></svg>
+      <svg style="position:absolute;bottom:15%;right:10%;width:160px;transform:rotate(30deg);" viewBox="0 0 100 200"><polygon points="40,0 90,0 50,80 95,80 10,200 45,110 5,110" fill="#1DD9DB" stroke="#FED602" stroke-width="4"/></svg>
+      <div class="stripe" style="top:40%;right:-10%;width:50%;transform:rotate(-12deg);opacity:.4;background:repeating-linear-gradient(45deg, #FED602 0 10px, transparent 10px 20px);"></div>
+    </div>
+    <div class="section-inner">
+      <h2>THRIFTING /<br>SECONDHAND</h2>
+      <div class="section-content">
+        <h3>Consumerism</h3>
+        Over <strong>100 billion</strong> garments are made every year, and over <strong>92 million tons</strong> of clothing become waste <span class="cite">(Sommke5 2024)</span>. Fast fashion takes part in excessive production, but consumers are also responsible for purchasing with awareness. People possess <strong>60%</strong> more clothing than 15 years ago, while those clothes are only used at about <strong>50%</strong> of their potential <span class="cite">(Sommke5 2024)</span>.<br><br>
+        <h3>Benefit of Thrifting</h3>
+        Thrifting gives people access to more unique items that are still in good condition at an affordable price <span class="cite">(Shaw 2024)</span>. It helps the environment by reducing demand, while also reducing financial burden because people can access items that would otherwise be more expensive <span class="cite">(Shaw 2024)</span>.<br><br>
+        <h3>The lower the demand, the lesser it damages the climate</h3>
+        Mass consumerism leads to massive production of products requiring non-renewable materials, and those materials are being used at a very fast rate <span class="cite">(Goodwill Industries International 2024)</span>. Toxic chemical emissions from fashion factories lead to environmental deterioration and affect nearby habitats and communities <span class="cite">(Goodwill Industries International 2024)</span>.<br><br>
+        <h3>It starts with your lifestyle</h3>
+        Many young people prefer thrifting over buying new outfits or products from official stores <span class="cite">(University of Colorado Boulder 2026)</span>. Thrifting can save money, develop personal taste without relying heavily on trends, and build a stronger sense of responsibility to consume with intention rather than impulse <span class="cite">(University of Colorado Boulder 2026)</span>.
+      </div>
+      <div class="genart-card stage-art-card" data-stage-art-src="../CaoTri_GenArt/index.html" data-stage-art-title="THRIFTING / SECONDHAND">
+        <div class="genart-card-head">
+          <span><span class="dot"></span>THRIFTING / SECONDHAND</span>
+          <button class="genart-zoom stage-art-zoom" type="button" aria-label="Open Stage 5 fullscreen experience">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M15 3h6v6"/>
+              <path d="M9 21H3v-6"/>
+              <path d="M21 3l-7 7"/>
+              <path d="M3 21l7-7"/>
+            </svg>
+            EXPAND
+          </button>
+        </div>
+        <div class="genart-card-body stage-art-card-body">
+          <iframe data-src="../CaoTri_GenArt/index.html" title="Stage 5 generative art preview" loading="lazy"></iframe>
+          <button class="stage-art-open-hit" type="button" aria-label="Open Stage 5 fullscreen experience"></button>
+        </div>
+        <div class="genart-card-caption">
+          To save the climate, we have to change our lifestyle
+        </div>
+      </div>
+      <div class="loop-note">&#8617; scroll down to loop back &#8617;</div>
+      <div class="ref-box">
+        <ol>
+          <li><strong>Akepa</strong> (2026) 20+ absurd facts &amp; stats about fast-fashion's impact, Akepa website, accessed 20 April 2026. <a href="https://thesustainableagency.com/blog/impact-of-fast-fashion-stats-and-facts/" target="_blank" rel="noopener">https://thesustainableagency.com/blog/impact-of-fast-fashion-stats-and-facts/</a></li>
+          <li><strong>Arisa</strong> (2025) The Fast Fashion Waste Mountain, Advocating Rights in South Asia website, accessed 20 April 2026. <a href="https://arisa.nl/wp-content/uploads/The-Fast-Fashion-WasteMountain.pdf" target="_blank" rel="noopener">https://arisa.nl/wp-content/uploads/The-Fast-Fashion-WasteMountain.pdf</a></li>
+          <li><strong>Dennings K</strong> (2025) Secondhand 101, Center for Biological Diversity website, accessed 19 April 2026. <a href="https://www.biologicaldiversity.org/programs/population_and_sustainability/sustainability/secondhand_101" target="_blank" rel="noopener">https://www.biologicaldiversity.org/programs/population_and_sustainability/sustainability/secondhand_101</a></li>
+          <li><strong>Earth.Org</strong> (2026) The Environmental Impact of Fast Fashion, Explained, Earth.Org website, accessed 20 April 2026. <a href="https://earth.org/fast-fashions-detrimental-effect-on-the-environment/" target="_blank" rel="noopener">https://earth.org/fast-fashions-detrimental-effect-on-the-environment/</a></li>
+          <li><strong>Environmental Protection Agency</strong> (2023) Textiles: Material-Specific Data, US EPA, viewed 24 April 2026. <a href="https://www.epa.gov/facts-and-figures-about-materials-waste-and-recycling/textiles-material-specific-data" target="_blank" rel="noopener">https://www.epa.gov/facts-and-figures-about-materials-waste-and-recycling/textiles-material-specific-data</a></li>
+          <li><strong>Estrela R</strong> (2025) How Microplastics are Changing the Oceans, Plastic Pollution Coalition website, accessed 19 April 2026. <a href="https://www.plasticpollutioncoalition.org/blog/2025/6/26/how-microplastics-are-changing-the-oceans" target="_blank" rel="noopener">https://www.plasticpollutioncoalition.org/blog/2025/6/26/how-microplastics-are-changing-the-oceans</a></li>
+          <li><strong>Goodwill Industries International</strong> (2024) Three reasons why thrifting is better for the environment, Goodwill Industries International, viewed 24 April 2026. <a href="https://www.goodwill.org/blog/shop/three-reasons-why-thrifting-is-better-for-the-environment/" target="_blank" rel="noopener">https://www.goodwill.org/blog/shop/three-reasons-why-thrifting-is-better-for-the-environment/</a></li>
+          <li><strong>Kalogerakis N</strong> (2025) Microplastics Volume 4, Issue 2 - Emerging Environmental Contaminants, MDPI website, accessed 21 April 2026. <a href="https://www.mdpi.com/2673-8929/4/2" target="_blank" rel="noopener">https://www.mdpi.com/2673-8929/4/2</a></li>
+          <li><strong>MacArthur E</strong> (n.d.) Keeping fashion and textiles in use, Ellen MacArthur Foundation website, accessed 20 April 2026. <a href="https://www.ellenmacarthurfoundation.org/" target="_blank" rel="noopener">https://www.ellenmacarthurfoundation.org/</a></li>
+          <li><strong>MDPI</strong> (2024) Environmental impacts of fast fashion supply chains, Sustainability Journal, viewed 20 April 2026. <a href="https://www.unep.org/events/unep-event/pollution-free-nature-positive-net-zero-fashion" target="_blank" rel="noopener">https://www.unep.org/events/unep-event/pollution-free-nature-positive-net-zero-fashion</a></li>
+          <li><strong>Mizrachi MP and Sharon O</strong> (2025) 'Secondhand fashion consumers exhibit fast fashion behaviors despite sustainability narratives', <em>Scientific Reports</em>, 15(1), doi:10.1038/s41598-025-19089-1.</li>
+          <li><strong>Moon D</strong> (2025) How Does Plastic In The Ocean Affect Climate Change?, Ocean Blue Project website, accessed 21 April 2026. <a href="https://oceanblueproject.org/how-does-plastic-in-the-ocean-affect-climate-change/" target="_blank" rel="noopener">https://oceanblueproject.org/how-does-plastic-in-the-ocean-affect-climate-change/</a></li>
+          <li><strong>Niinimaki K, Peters G, Dahlbo H, Perry P, Rissanen T and Gwilt A</strong> (2020) 'The environmental price of fast fashion', <em>Nature Reviews Earth &amp; Environment</em>, 1(4), pp. 189&ndash;200. <a href="https://www.nature.com/articles/s43017-020-0039-9#Sec11" target="_blank" rel="noopener">https://www.nature.com/articles/s43017-020-0039-9#Sec11</a></li>
+          <li><strong>Rawshot</strong> (2026) Textile Waste Recycling Statistics, RAWSHOT.AI website, accessed 20 April 2026. <a href="https://rawshot.ai/statistic/textile-waste-recycling" target="_blank" rel="noopener">https://rawshot.ai/statistic/textile-waste-recycling</a></li>
+          <li><strong>Reinhart J</strong> (2026) 2026 Resale Report, ThredUp website, accessed 20 April 2026. <a href="https://www.thredup.com/resale/" target="_blank" rel="noopener">https://www.thredup.com/resale/</a></li>
+          <li><strong>RoadRunner</strong> (8 January 2021) 'The Environmental Crisis Caused by Textile Waste', RoadRunner, accessed 20 April 2026. <a href="https://www.roadrunnerwm.com/blog/textile-waste-environmental-crisis" target="_blank" rel="noopener">https://www.roadrunnerwm.com/blog/textile-waste-environmental-crisis</a></li>
+          <li><strong>Savchuk K</strong> (2025) Microplastics and our health: What the science says, Stanford Medicine website, accessed 19 April 2026. <a href="https://med.stanford.edu/news/insights/2025/01/microplastics-in-body-polluted-tiny-plastic-fragments.html" target="_blank" rel="noopener">https://med.stanford.edu/news/insights/2025/01/microplastics-in-body-polluted-tiny-plastic-fragments.html</a></li>
+          <li><strong>Schirrer S</strong> (2026) Waste Colonialism in the fashion industry, Fabric of Change website, accessed 20 April 2026. <a href="https://www.fabricofchange.ie/articles/waste-colonialism-in-the-fashion-industry" target="_blank" rel="noopener">https://www.fabricofchange.ie/articles/waste-colonialism-in-the-fashion-industry</a></li>
+          <li><strong>Shaw B</strong> (2024) Why thrifting is good for the environment, THRIVE Project, viewed 24 April 2026. <a href="https://thrivabilitymatters.org/why-thrifting-is-good-for-the-environment/" target="_blank" rel="noopener">https://thrivabilitymatters.org/why-thrifting-is-good-for-the-environment/</a></li>
+          <li><strong>Sommke5</strong> (2024) Thrifting for the environment, not just for the deals, Furman Greenbelt Sustainable Living Community, viewed 24 April 2026. <a href="https://blogs.furman.edu/greenbelt/2024/11/22/thrifting-for-the-environment-not-just-for-the-deals/" target="_blank" rel="noopener">https://blogs.furman.edu/greenbelt/2024/11/22/thrifting-for-the-environment-not-just-for-the-deals/</a></li>
+          <li><strong>Sustainability and Acciona</strong> (n.d.) Robert Swan and our planet, Sustainability and Acciona website, accessed 5 March 2026. <a href="https://www.activesustainability.com/environment/robert-swan-and-our-planet" target="_blank" rel="noopener">https://www.activesustainability.com/environment/robert-swan-and-our-planet</a></li>
+          <li><strong>United Nations</strong> (n.d.) The 17 Goals, United Nations website, accessed 5 March 2026. <a href="https://sdgs.un.org/goals" target="_blank" rel="noopener">https://sdgs.un.org/goals</a></li>
+          <li><strong>United Nations Environment Programme</strong> (2023) Sustainability and Circularity in the Textile Value Chain, UNEP, viewed 18 April 2026. <a href="https://www.unep.org/annualreport/2025/stories/minimizing-fashions-environmental-footprint" target="_blank" rel="noopener">https://www.unep.org/annualreport/2025/stories/minimizing-fashions-environmental-footprint</a></li>
+          <li><strong>University of Colorado Boulder</strong> (2026) A sustainable guide to thrifting, University of Colorado Boulder, viewed 24 April 2026. <a href="https://www.colorado.edu/ecenter/2023/12/15/sustainable-guide-thrifting" target="_blank" rel="noopener">https://www.colorado.edu/ecenter/2023/12/15/sustainable-guide-thrifting</a></li>
+          <li><strong>WRAP</strong> (2023) Transforming the World's Textiles System, WRAP website, accessed 20 April 2026. <a href="https://www.wrap.ngo/what-we-do/transform-textiles" target="_blank" rel="noopener">https://www.wrap.ngo/what-we-do/transform-textiles</a></li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======== ABOUT US (last page in the cycle) ======== -->
+  <section class="page page-section page-about" id="page-about" data-page-color="blue">
+    <div class="section-deco">
+      <svg style="position:absolute;top:8%;right:6%;width:160px;transform:rotate(12deg);" viewBox="0 0 100 200"><polygon points="40,0 90,0 50,80 95,80 10,200 45,110 5,110" fill="#1DD9DB" stroke="#000" stroke-width="4"/></svg>
+      <div class="stripe" style="top:35%;left:-8%;width:42%;transform:rotate(-6deg);"></div>
+      <div class="blob" style="bottom:-10%;right:-5%;background:var(--yellow);clip-path:polygon(15% 10%,60% 0,95% 20%,100% 55%,85% 95%,40% 100%,5% 75%,10% 30%);"></div>
+      <div class="halftone" style="top:20%;left:22%;width:140px;height:140px;"></div>
+      <div class="halftone" style="bottom:22%;right:18%;width:120px;height:120px;"></div>
+    </div>
+    <div class="section-inner">
+      <h2>ABOUT US</h2>
+      <div class="section-content about-content">
+        <div class="about-block">
+          <strong>Group name:</strong> Quan oc cay me<br><br>
+          <strong>Members:</strong><br>
+          Nguyen Le Quynh Anh &mdash; s4015149<br>
+          Ha Minh Hoang &mdash; s4129129<br>
+          Nguyen Thai Phuong Nam &mdash; s4106115<br>
+          Nguyen Bao Han &mdash; s4125775<br>
+          Nguyen Quoc Cao Tri &mdash; s3971172
+        </div>
+
+        <div class="about-block">
+          <strong>Course:</strong> COMM2754 &mdash; Digital Media Specialization 1 &mdash; Semester A 2026<br>
+          <strong>Program:</strong> RMIT University Vietnam, Saigon South Campus, School of Communication and Design, Digital Media Program<br>
+          <strong>Date:</strong> March 27, 2026
+        </div>
+
+        <div class="about-block">
+          <strong>SDG 13 &mdash; Climate Action:</strong> Take urgent action to combat climate change and its impacts.
+        </div>
+
+        <div class="about-block about-quote">
+          <em>&ldquo;The greatest threat to our planet is the belief that someone else will save it.&rdquo;</em>
+          <span class="cite">(Sustainability and Acciona n.d.)</span>
+        </div>
+
+        <div class="about-block">
+          Robert Swan's 1989 statement perfectly captures the dangerous mindset fueling modern <em>"throwaway" culture</em>. When the environmental cost of production is deferred to corporations or future waste-management technologies, individuals disengage from the impact of their own consumption, allowing the cycle of fast fashion and overproduction to persist.<br><br>
+
+          This passive attitude contradicts the core of <em>sustainable living</em>, which requires an urgent shift toward a circular economy and conscious consumerism. The environmental crisis isn't just sustained by industrial inaction; it is fed by a global pattern of convenience where each person assumes their single "new" purchase is insignificant.<br><br>
+
+          <em>Thrift culture</em> emerges as a powerful act of resistance, encouraging people to shift from mindless buying to personal accountability. It serves as a direct reminder that the most sustainable product is the one that already exists.<br><br>
+
+          <strong>Join us in the journey of thrifting culture and buying secondhand: the most powerful way to protect our planet is to realize that our own small choices at the checkout are what will save it.</strong>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div><!-- /.page-stack -->
+
+<!-- ================ SHARED STAGE ART FULLSCREEN OVERLAY ================ -->
+<div id="stage-art-fullscreen" class="stage-art-fullscreen" aria-hidden="true" role="dialog" aria-label="Stage generative art">
+  <iframe id="stage-art-frame" title="Stage generative art fullscreen"></iframe>
+  <div id="stage-art-label" class="genart-label">STAGE ART</div>
+  <button id="stage-art-close" aria-label="Close fullscreen">&times;</button>
+</div>
+
+<!-- ================ GENERATIVE ART FULLSCREEN OVERLAY ================ -->
+<div id="genart-fullscreen" class="genart-fullscreen" aria-hidden="true" role="dialog" aria-label="Interactive generative art">
+  <canvas id="genart-full-canvas"></canvas>
+
+  <!-- top damage bar -->
+  <div class="genart-bar-track"><div id="genart-bar"></div></div>
+
+  <!-- labels -->
+  <div class="genart-label">WASTE MANAGEMENT / CLIMATE DAMAGE</div>
+  <div class="genart-dmg">ENV. DAMAGE&nbsp; <span id="genart-pct">0</span>%</div>
+
+  <!-- regenerate + close -->
+  <button id="genart-regen" aria-label="Regenerate">&#8635; Regenerate</button>
+  <button id="genart-close" aria-label="Close fullscreen">&times;</button>
+
+  <!-- narrative intro overlay &mdash; text fades in/out with each state.
+       pointer-events:none so clicks fall through to the canvas. -->
+  <div id="genart-narrative" class="genart-narrative">
+    <div id="genart-narrative-main" class="genart-narrative-main"></div>
+    <div id="genart-narrative-hint" class="genart-narrative-hint"></div>
+  </div>
+</div>
+
+<!-- progress dots -->
+<ul class="progress-dots">
+  <li data-idx="0" class="active"></li>
+  <li data-idx="1"></li>
+  <li data-idx="2"></li>
+  <li data-idx="3"></li>
+  <li data-idx="4"></li>
+  <li data-idx="5"></li>
+  <li data-idx="6"></li>
+</ul>
+
+<!-- sound toggle + slider panel -->
+<div class="sound-cluster" id="sound-cluster">
+  <!-- data-state="on" by default so SFX play on first page load.
+       music.js initializes the SFX slider at 80 and music at 0, so
+       the OR-condition (any volume > 0) keeps this "on" until the
+       user explicitly drags SFX to zero. -->
+  <button id="music-toggle" class="music-toggle" aria-label="Toggle sound" data-state="on">
+    <span class="music-icon music-icon-off">
+      <!-- speaker with slash -->
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M11 5 L6 9 H2 V15 H6 L11 19 Z"/>
+        <line x1="17" y1="9" x2="23" y2="15"/>
+        <line x1="23" y1="9" x2="17" y2="15"/>
+      </svg>
+    </span>
+    <span class="music-icon music-icon-on">
+      <!-- speaker with waves -->
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M11 5 L6 9 H2 V15 H6 L11 19 Z"/>
+        <path d="M15.5 8.5 C17 10 17 14 15.5 15.5"/>
+        <path d="M18.5 5.5 C21.5 8.5 21.5 15.5 18.5 18.5"/>
+      </svg>
+    </span>
+    <span class="music-label">sound</span>
+  </button>
+
+  <div id="sound-panel" class="sound-panel" aria-hidden="true">
+    <div class="sound-panel-row">
+      <label for="vol-music">music</label>
+      <input type="range" id="vol-music" min="0" max="100" value="0">
+      <span class="vol-readout" id="vol-music-num">0</span>
+    </div>
+    <div class="sound-panel-row">
+      <label for="vol-sfx">effects</label>
+      <!-- Default 80 &mdash; SFX always on at 80% on page load.
+           Music slider stays at 0 (off until user opts in). -->
+      <input type="range" id="vol-sfx" min="0" max="100" value="80">
+      <span class="vol-readout" id="vol-sfx-num">80</span>
+    </div>
+  </div>
+</div>
+
+<script src="sketch.js"></script>
+<script src="reveal.js"></script>
+<script src="noise.js"></script>
+<script src="drag.js"></script>
+<script src="pages.js"></script>
+<script src="nanagenart.js"></script>
+<script src="stageart.js"></script>
+<script src="sound.js"></script>
+<script src="music.js"></script>
+</body>
+</html>
+

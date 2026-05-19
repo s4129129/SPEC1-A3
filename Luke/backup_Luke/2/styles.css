@@ -1,0 +1,39 @@
+:root {
+  --bg: #000000;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  min-height: 100%;
+  margin: 0;
+}
+
+body {
+  background-color: var(--bg);
+  font-family: Helvetica, Arial, sans-serif;
+  overflow-x: hidden;
+}
+
+#art-stage {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+}
+
+#art-stage canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+#scroll-space {
+  position: relative;
+  z-index: 0;
+  height: 640vh;
+  pointer-events: none;
+}
