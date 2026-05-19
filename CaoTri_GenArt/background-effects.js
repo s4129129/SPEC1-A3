@@ -24,15 +24,49 @@ function formula(power, radius) {
 
 function buildBackgroundGrainLayer(layer) {
   layer.clear();
-  layer.loadPixels();
-  for (let i = 0; i < layer.pixels.length; i += 4) {
-    const value = random(255);
-    layer.pixels[i] = value;
-    layer.pixels[i + 1] = value;
-    layer.pixels[i + 2] = value;
-    layer.pixels[i + 3] = 15;
+  layer.colorMode(RGB, 255, 255, 255, 255);
+  layer.strokeWeight(1);
+
+  const whiteGrainCount = floor(width * height * 0.16);
+  for (let i = 0; i < whiteGrainCount; i += 1) {
+    layer.stroke(255, 255, 255, random(10, 78));
+    layer.point(random(width), random(height));
   }
-  layer.updatePixels();
+
+  const darkGrainCount = floor(width * height * 0.074);
+  for (let i = 0; i < darkGrainCount; i += 1) {
+    layer.stroke(0, 0, 0, random(8, 52));
+    layer.point(random(width), random(height));
+  }
+
+  const brightSpeckCount = floor(width * height * 0.012);
+  for (let i = 0; i < brightSpeckCount; i += 1) {
+    layer.stroke(255, 255, 255, random(72, 170));
+    layer.point(random(width), random(height));
+  }
+
+  layer.noStroke();
+  const cloudCount = floor(width * height * 0.00018);
+  for (let i = 0; i < cloudCount; i += 1) {
+    layer.fill(255, 255, 255, random(4, 14));
+    drawSineWaveBlob(
+      layer,
+      random(width),
+      random(height),
+      random(max(14, width * 0.02), max(52, width * 0.16))
+    );
+  }
+
+  layer.stroke(255, 255, 255, 18);
+  layer.strokeWeight(1);
+  const scratchCount = floor(width * height * 0.00068);
+  for (let i = 0; i < scratchCount; i += 1) {
+    const x = random(width);
+    const y = random(height);
+    const length = random(8, 34);
+    const angle = random(TWO_PI);
+    layer.line(x, y, x + cos(angle) * length, y + sin(angle) * length);
+  }
 }
 
 function drawSineWaveBlob(layer, centerX, centerY, radius) {
