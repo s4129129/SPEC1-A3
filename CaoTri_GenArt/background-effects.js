@@ -5,25 +5,7 @@ function initReferencePatternBackdrop() {
     ceil(width * REFERENCE_PATTERN_LAYER_SCALE),
     ceil(height * REFERENCE_PATTERN_LAYER_SCALE)
   );
-  const radius = sqrt(layer.width * layer.width + layer.height * layer.height) * 0.5;
   buildBackgroundGrainLayer(layer);
-
-  const sampleCount = min(
-    REFERENCE_PATTERN_MAX_POINTS,
-    floor(layer.width * layer.height * 0.006)
-  );
-  layer.strokeWeight(1);
-  layer.stroke(255, (30 / 100) * 255);
-
-  for (let i = 0; i < sampleCount; i += 1) {
-    const pointRadius = formula(1, radius).value;
-    const angle = random(TWO_PI);
-    const pointX = layer.width * 0.5 + cos(angle) * pointRadius;
-    const pointY = layer.height * 0.5 + sin(angle) * pointRadius;
-
-    layer.point(pointX, pointY);
-  }
-
   return layer;
 }
 
@@ -50,39 +32,44 @@ function buildBackgroundGrainLayer(layer) {
   const layerW = layer.width;
   const layerH = layer.height;
 
-  const cloudCount = min(REFERENCE_PATTERN_MAX_CLOUDS, floor(layerW * layerH * 0.000025));
-  for (let i = 0; i < cloudCount; i += 1) {
-    layer.fill(255, 255, 255, random(2, 8));
-    drawSineWaveBlob(
-      layer,
-      random(layerW),
-      random(layerH),
-      random(max(14, layerW * 0.02), max(52, layerW * 0.16))
-    );
+  layer.loadPixels();
+  for (let i = 0; i < layer.pixels.length; i += 4) {
+    const value = random(255);
+    layer.pixels[i] = value;
+    layer.pixels[i + 1] = value;
+    layer.pixels[i + 2] = value;
+    layer.pixels[i + 3] = 15;
+  }
+  layer.updatePixels();
+
+  layer.noStroke();
+  for (let y = 0; y < layerH; y += 3) {
+    layer.fill(255, 9);
+    layer.rect(0, y, layerW, 1);
   }
 
-  layer.stroke(255, 255, 255, 12);
-  layer.strokeWeight(1);
-  const scratchCount = min(REFERENCE_PATTERN_MAX_SCRATCHES, floor(layerW * layerH * 0.00008));
-  for (let i = 0; i < scratchCount; i += 1) {
+  const speckleCount = floor(layerW * layerH * 0.045);
+  for (let i = 0; i < speckleCount; i += 1) {
     const x = random(layerW);
     const y = random(layerH);
-    const length = random(8, 34);
-    const angle = random(TWO_PI);
-    layer.line(x, y, x + cos(angle) * length, y + sin(angle) * length);
+    const size = random(1, 3.5);
+    const bright = random(95, 180);
+    layer.fill(bright, random(18, 65));
+    layer.rect(x, y, size, size);
   }
 
-  const cellCount = min(REFERENCE_PATTERN_MAX_CELLS, floor(layerW * layerH * 0.000006));
-  for (let i = 0; i < cellCount; i += 1) {
-    const rng = () => random();
-    drawCellSineGrainPattern(
-      layer,
-      random(layerW),
-      random(layerH),
-      random(max(18, layerW * 0.015), max(42, layerW * 0.08)),
-      rng,
-      random(8, 22)
-    );
+  for (let i = 0; i < 120; i += 1) {
+    const x = random(layerW);
+    const y = random(layerH);
+    const size = random(2, 6);
+    layer.fill(random(110, 190), random(16, 52));
+    layer.ellipse(x, y, size, size * random(0.7, 1.2));
+  }
+
+  for (let i = 0; i < 18; i += 1) {
+    const x = random(layerW);
+    layer.fill(0, random(10, 20));
+    layer.rect(x, layerH * 0.5, random(layerW * 0.03, layerW * 0.12), layerH);
   }
 }
 
