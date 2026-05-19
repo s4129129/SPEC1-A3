@@ -1,10 +1,7 @@
 // Background texture, smoke, and star helpers.
 
 function initReferencePatternBackdrop() {
-  const layer = createGraphics(
-    ceil(width * REFERENCE_PATTERN_LAYER_SCALE),
-    ceil(height * REFERENCE_PATTERN_LAYER_SCALE)
-  );
+  const layer = createGraphics(width, height);
   buildBackgroundGrainLayer(layer);
   return layer;
 }
@@ -15,8 +12,7 @@ function drawReferencePatternBackdrop() {
   }
 
   push();
-  tint(255, REFERENCE_PATTERN_BACKDROP_ALPHA);
-  image(referencePatternNoiseLayer, 0, 0, width, height);
+  image(referencePatternNoiseLayer, 0, 0);
   pop();
 }
 
@@ -28,10 +24,6 @@ function formula(power, radius) {
 
 function buildBackgroundGrainLayer(layer) {
   layer.clear();
-  layer.noStroke();
-  const layerW = layer.width;
-  const layerH = layer.height;
-
   layer.loadPixels();
   for (let i = 0; i < layer.pixels.length; i += 4) {
     const value = random(255);
@@ -41,36 +33,6 @@ function buildBackgroundGrainLayer(layer) {
     layer.pixels[i + 3] = 15;
   }
   layer.updatePixels();
-
-  layer.noStroke();
-  for (let y = 0; y < layerH; y += 3) {
-    layer.fill(255, 9);
-    layer.rect(0, y, layerW, 1);
-  }
-
-  const speckleCount = floor(layerW * layerH * 0.045);
-  for (let i = 0; i < speckleCount; i += 1) {
-    const x = random(layerW);
-    const y = random(layerH);
-    const size = random(1, 3.5);
-    const bright = random(95, 180);
-    layer.fill(bright, random(18, 65));
-    layer.rect(x, y, size, size);
-  }
-
-  for (let i = 0; i < 120; i += 1) {
-    const x = random(layerW);
-    const y = random(layerH);
-    const size = random(2, 6);
-    layer.fill(random(110, 190), random(16, 52));
-    layer.ellipse(x, y, size, size * random(0.7, 1.2));
-  }
-
-  for (let i = 0; i < 18; i += 1) {
-    const x = random(layerW);
-    layer.fill(0, random(10, 20));
-    layer.rect(x, layerH * 0.5, random(layerW * 0.03, layerW * 0.12), layerH);
-  }
 }
 
 function drawSineWaveBlob(layer, centerX, centerY, radius) {
