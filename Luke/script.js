@@ -1526,64 +1526,146 @@ function drawStoryText() {
   }
 
   if (mainLine.length > 0) { 
-    textSize(Math.max(17, Math.min(width, height) * 0.035)); 
-    
-    // Dynamic Box Constraints
-    const mainLines = mainLine.toUpperCase().split("\n");
-    const tw = Math.max(...mainLines.map((line) => textWidth(line)));
-    const boxW = tw + 60;
-    const lineHeight = Math.max(24, Math.min(width, height) * 0.047);
-    const boxPaddingTop = Math.max(18, Math.min(width, height) * 0.026);
-    const boxPaddingBottom = Math.max(18, Math.min(width, height) * 0.026);
-    const boxH = Math.max(
-      54,
-      lineHeight * mainLines.length + boxPaddingTop + boxPaddingBottom
-    );
-    const cx = width * 0.5;
-    const cy = height * 0.78;
-    const boxTop = cy - boxH * 0.5;
-    const boxBottom = cy + boxH * 0.5;
-
-    noStroke();
-    fill(PALETTE.teal);
-    rect(cx + 12, cy + 12, boxW, boxH);
-    fill(PALETTE.pink);
-    rect(cx + 6, cy + 6, boxW, boxH);
-
-    fill(0, 0, 0, 184);
-    stroke(PALETTE.yellow);
-    strokeWeight(3);
-    rect(cx, cy, boxW, boxH);
-
-    noStroke();
-    for (let i = 0; i < mainLines.length; i += 1) {
-      const lineY = boxTop + boxPaddingTop + lineHeight * 0.5 + i * lineHeight;
-      fill(PALETTE.pink);
-      text(mainLines[i], cx + 2, lineY + 2);
-      fill(PALETTE.white);
-      text(mainLines[i], cx, lineY);
-    }
+    const metrics = drawSharedDialogueBox(mainLine, width * 0.5, height * 0.78, {
+      fontSize: Math.max(17, Math.min(width, height) * 0.035),
+      maxWidth: Math.min(width * 0.82, 760),
+    });
 
     if (hintLine.length > 0) {
-      textSize(Math.max(10, Math.min(width, height) * 0.015));
-      fill(PALETTE.teal);
-      noStroke();
-      const hintGap = Math.max(48, Math.min(width, height) * 0.07);
-      const hintY = Math.min(height - 28, boxBottom + hintGap);
-      text(hintLine, width * 0.5, hintY);
+      drawSharedDialogueHint(hintLine, metrics);
       hintLine = "";
     }
   }
 
   if (hintLine.length > 0) { 
-    textSize(Math.max(10, Math.min(width, height) * 0.015)); 
-    fill(PALETTE.teal); 
-    noStroke();
-    const subtextYOffset = Math.max(40, Math.min(width, height) * 0.08) * 0.5 + 20;
-    text(hintLine, width * 0.5, height * 0.78 + subtextYOffset); 
+    drawSharedDialogueHint(hintLine, {
+      boxX: 0,
+      boxY: height * 0.78,
+      boxW: width,
+      boxH: 0,
+      scaleValue: getSharedDialogueScale(),
+    }); 
   }
 
   pop();
+}
+
+function getSharedDialogueScale() {
+  return constrain(Math.min(width, height) / 720, 0.58, 1);
+}
+
+function drawSharedDialogueBox(message, centerX, centerY, options = {}) {
+  const scaleValue = getSharedDialogueScale();
+  const paddingX = options.paddingX ?? Math.max(18, 40 * scaleValue);
+  const paddingY = options.paddingY ?? Math.max(10, 14 * scaleValue);
+  const borderSize = Math.max(2, 4 * scaleValue);
+  const glitchOffset = Math.max(3, 5 * scaleValue);
+  const maxBoxW = options.maxWidth ?? width - (width < 560 ? 36 : 100 * scaleValue);
+  let fontSize = options.fontSize ?? Math.max(width < 560 ? 18 : 24, 40 * scaleValue);
+  const minFontSize = width < 560 ? 10 : 12;
+
+  push();
+  drawingContext.save();
+  textFont("Averia Sans Libre");
+  textStyle(BOLD);
+  textAlign(LEFT, CENTER);
+  if ("letterSpacing" in drawingContext) {
+    drawingContext.letterSpacing = "2.5px";
+  }
+
+  textSize(fontSize);
+  let lines = wrapSharedDialogueText(message, maxBoxW - paddingX * 2);
+  while (getSharedDialogueMaxLineWidth(lines) > maxBoxW - paddingX * 2 && fontSize > minFontSize) {
+    fontSize -= 1;
+    textSize(fontSize);
+    lines = wrapSharedDialogueText(message, maxBoxW - paddingX * 2);
+  }
+
+  const lineHeight = fontSize * 1.08;
+  const boxW = Math.min(maxBoxW, getSharedDialogueMaxLineWidth(lines) + paddingX * 2);
+  const boxH = lines.length * lineHeight + paddingY * 2;
+  const boxX = centerX - boxW * 0.5;
+  const boxY = centerY - boxH * 0.5;
+  const firstTextY = boxY + boxH * 0.5 - (lines.length - 1) * lineHeight * 0.5;
+
+  rectMode(CORNER);
+  noFill();
+  strokeWeight(borderSize);
+  stroke(PALETTE.teal);
+  rect(boxX + glitchOffset, boxY + glitchOffset, boxW, boxH);
+  stroke(PALETTE.pink);
+  rect(boxX + glitchOffset * 0.55, boxY + glitchOffset * 0.35, boxW, boxH);
+
+  fill(0);
+  stroke(PALETTE.yellow);
+  strokeWeight(borderSize);
+  rect(boxX, boxY, boxW, boxH);
+
+  noStroke();
+  const textX = boxX + paddingX;
+  const textShadeOffset = Math.max(2, 5 * scaleValue);
+  for (let i = 0; i < lines.length; i += 1) {
+    const lineY = firstTextY + i * lineHeight;
+    fill(0, 210);
+    text(lines[i], textX + textShadeOffset, lineY + textShadeOffset);
+    fill(PALETTE.pink);
+    text(lines[i], textX + 3 * scaleValue, lineY + 3 * scaleValue);
+    fill(PALETTE.white);
+    text(lines[i], textX, lineY);
+  }
+
+  drawingContext.restore();
+  pop();
+
+  return { boxX, boxY, boxW, boxH, scaleValue };
+}
+
+function drawSharedDialogueHint(hintText, metrics) {
+  const scaleValue = metrics.scaleValue ?? getSharedDialogueScale();
+  const blinkAlpha = 0.25 + 0.75 * (sin(frameCount * 0.055) * 0.5 + 0.5);
+  const promptY = Math.min(height - 28, metrics.boxY + metrics.boxH + 24 * scaleValue);
+
+  push();
+  drawingContext.save();
+  drawingContext.globalAlpha *= blinkAlpha;
+  textFont("Averia Sans Libre");
+  textStyle(NORMAL);
+  textAlign(CENTER, CENTER);
+  textSize(Math.max(10, Math.min(width, height) * 0.015));
+  noStroke();
+  fill(PALETTE.teal);
+  if ("letterSpacing" in drawingContext) {
+    drawingContext.letterSpacing = "5px";
+  }
+  text(String(hintText).toUpperCase(), metrics.boxX + metrics.boxW * 0.5, promptY);
+  drawingContext.restore();
+  pop();
+}
+
+function wrapSharedDialogueText(message, maxLineWidth) {
+  const paragraphs = String(message).toUpperCase().split("\n");
+  const lines = [];
+
+  for (const paragraph of paragraphs) {
+    const words = paragraph.split(/\s+/).filter(Boolean);
+    let currentLine = "";
+    for (const word of words) {
+      const candidate = currentLine ? `${currentLine} ${word}` : word;
+      if (textWidth(candidate) <= maxLineWidth || !currentLine) {
+        currentLine = candidate;
+      } else {
+        lines.push(currentLine);
+        currentLine = word;
+      }
+    }
+    if (currentLine) lines.push(currentLine);
+  }
+
+  return lines.length > 0 ? lines : [String(message).toUpperCase()];
+}
+
+function getSharedDialogueMaxLineWidth(lines) {
+  return lines.reduce((widest, line) => Math.max(widest, textWidth(line)), 0);
 }
 
 function ensureSoundToggleButton() {

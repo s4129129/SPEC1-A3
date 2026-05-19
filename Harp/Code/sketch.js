@@ -86,6 +86,11 @@ let ultraSmoothBannerText = '';
 let currentStage = 0;
 let restartButtonPressed = false;
 let restartButtonHoveredLast = false;
+let touchScrollStartY = null;
+let touchScrollLastY = null;
+let touchScrollStartX = null;
+let touchScrollMoved = false;
+let lastTouchEndedAt = -Infinity;
 
 let popupHarpClickSounds = [];
 let popupClickSounds = [];
@@ -252,22 +257,30 @@ function keyPressed() {
 }
 
 function mousePressed() {
+  if (millis() - lastTouchEndedAt < 450) {
+    return false;
+  }
+
+  handlePointerPress(mouseX, mouseY);
+}
+
+function handlePointerPress(pointerX, pointerY) {
   unlockStageHumming();
 
-  if (virtualScroll >= getFinalScrollLimit() && isRestartButtonHovered(mouseX, mouseY)) {
+  if (virtualScroll >= getFinalScrollLimit() && isRestartButtonHovered(pointerX, pointerY)) {
     restartButtonPressed = true;
     playRestartButtonClickSound(() => {
       restartSketch();
     });
-    return;
+    return true;
   }
 
-  let myWorld = mouseY + virtualScroll;
+  let myWorld = pointerY + virtualScroll;
   
   // Check popups from top to bottom. The last drawn popup is visually on top.
   for (let i = uiPopups.length - 1; i >= 0; i--) {
     let p = uiPopups[i];
-    if (abs(mouseX - p.x) < p.w/2 && abs(myWorld - p.y) < p.h/2) {
+    if (abs(pointerX - p.x) < p.w/2 && abs(myWorld - p.y) < p.h/2) {
       if (p.idx !== undefined && p.idx >= 0) {
         if (!popupAnimStates[p.idx]) popupAnimStates[p.idx] = { scale: 1, clickFrames: 0 };
         popupAnimStates[p.idx].clickFrames = 8;
@@ -283,12 +296,70 @@ function mousePressed() {
       break;
     }
   }
+
+  return false;
 }
 
 function mouseReleased() {
   if (restartButtonPressed) {
     restartButtonPressed = false;
   }
+}
+
+function touchStarted() {
+  unlockStageHumming();
+  let point = getPrimaryTouchPoint();
+  if (!point) return false;
+
+  touchScrollStartX = point.x;
+  touchScrollStartY = point.y;
+  touchScrollLastY = point.y;
+  touchScrollMoved = false;
+  return false;
+}
+
+function touchMoved() {
+  let point = getPrimaryTouchPoint();
+  if (!point || touchScrollLastY === null) return false;
+
+  let deltaY = touchScrollLastY - point.y;
+  if (abs(point.y - touchScrollStartY) > 8 || abs(point.x - touchScrollStartX) > 8) {
+    touchScrollMoved = true;
+  }
+
+  scrollVelocity += deltaY * 0.42;
+  touchScrollLastY = point.y;
+  return false;
+}
+
+function touchEnded() {
+  let shouldTap = !touchScrollMoved && touchScrollStartX !== null && touchScrollStartY !== null;
+  if (shouldTap) {
+    handlePointerPress(touchScrollStartX, touchScrollStartY);
+  }
+
+  if (restartButtonPressed) {
+    restartButtonPressed = false;
+  }
+
+  touchScrollStartX = null;
+  touchScrollStartY = null;
+  touchScrollLastY = null;
+  touchScrollMoved = false;
+  lastTouchEndedAt = millis();
+  return false;
+}
+
+function getPrimaryTouchPoint() {
+  if (touches && touches.length > 0) {
+    return { x: touches[0].x, y: touches[0].y };
+  }
+
+  if (Number.isFinite(mouseX) && Number.isFinite(mouseY)) {
+    return { x: mouseX, y: mouseY };
+  }
+
+  return null;
 }
 
 function windowResized() {
@@ -1061,54 +1132,93 @@ function drawMessageBox() {
 
   noteMessageBoxTextVisible(message);
 
-  let boxW = min(width * 0.82, 760);
-  let boxH = width < 560 ? 100 : 84;
   let centerX = width / 2;
   let preferredY = mainPlanePos.y - max(80, height * 0.12);
-  let centerY = constrain(preferredY, boxH / 2 + 20, height - boxH / 2 - 20);
-  let innerW = boxW - 52;
-  let innerH = boxH - 24;
+  let scaleValue = getSharedDialogueScale();
+  let estimatedBoxH = (width < 560 ? 18 : 24) * 1.08 + max(10, 14 * scaleValue) * 2;
+  let centerY = constrain(preferredY, estimatedBoxH / 2 + 20, height - estimatedBoxH / 2 - 44);
+
+  drawSharedDialogueBox(message, centerX, centerY, {
+    fontSize: width < 560 ? 18 : 24,
+    maxWidth: min(width * 0.82, 760),
+  });
+}
+
+function getSharedDialogueScale() {
+  return constrain(min(width, height) / 720, 0.58, 1);
+}
+
+function drawSharedDialogueBox(message, centerX, centerY, options = {}) {
+  let scaleValue = getSharedDialogueScale();
+  let paddingX = options.paddingX ?? max(18, 40 * scaleValue);
+  let paddingY = options.paddingY ?? max(10, 14 * scaleValue);
+  let borderSize = max(2, 4 * scaleValue);
+  let glitchOffset = max(3, 5 * scaleValue);
+  let maxBoxW = options.maxWidth ?? width - (width < 560 ? 36 : 100 * scaleValue);
+  let fontSize = options.fontSize ?? max(width < 560 ? 18 : 24, 40 * scaleValue);
+  let minFontSize = width < 560 ? 10 : 12;
 
   push();
-  rectMode(CENTER);
-  textAlign(CENTER, CENTER);
-  textFont('Averia Sans Libre');
-
+  drawingContext.save();
   drawingContext.shadowBlur = 0;
   drawingContext.shadowOffsetX = 0;
   drawingContext.shadowOffsetY = 0;
+  textFont('Averia Sans Libre');
+  textStyle(BOLD);
+  textAlign(LEFT, CENTER);
+  if ('letterSpacing' in drawingContext) {
+    drawingContext.letterSpacing = '2.5px';
+  }
 
-  noStroke();
-  fill(COLORS.cyan);
-  rect(centerX + 12, centerY + 12, boxW, boxH);
-  fill(COLORS.pink);
-  rect(centerX + 6, centerY + 6, boxW, boxH);
-
-  fill(0, 0, 0, 184);
-  stroke(COLORS.yellow);
-  strokeWeight(3);
-  rect(centerX, centerY, boxW, boxH);
-
-  noStroke();
-  let fontSize = width < 560 ? 18 : 24; 
-  let lines = [];
-  while (fontSize >= 12) {
-    textSize(fontSize);
-    lines = wrapMessageText(String(message).toUpperCase(), innerW);
-    if (lines.length * fontSize * 1.5 <= innerH) break; 
+  textSize(fontSize);
+  let lines = wrapMessageText(String(message).toUpperCase(), maxBoxW - paddingX * 2);
+  while (getSharedDialogueMaxLineWidth(lines) > maxBoxW - paddingX * 2 && fontSize > minFontSize) {
     fontSize--;
+    textSize(fontSize);
+    lines = wrapMessageText(String(message).toUpperCase(), maxBoxW - paddingX * 2);
   }
 
-  let lineHeight = fontSize * 1.35; 
-  let startY = centerY - ((lines.length - 1) * lineHeight) / 2;
+  let lineHeight = fontSize * 1.08;
+  let boxW = min(maxBoxW, getSharedDialogueMaxLineWidth(lines) + paddingX * 2);
+  let boxH = lines.length * lineHeight + paddingY * 2;
+  let boxX = centerX - boxW * 0.5;
+  let boxY = centerY - boxH * 0.5;
+  let firstTextY = boxY + boxH * 0.5 - (lines.length - 1) * lineHeight * 0.5;
+
+  rectMode(CORNER);
+  noFill();
+  strokeWeight(borderSize);
+  stroke(COLORS.cyan);
+  rect(boxX + glitchOffset, boxY + glitchOffset, boxW, boxH);
+  stroke(COLORS.pink);
+  rect(boxX + glitchOffset * 0.55, boxY + glitchOffset * 0.35, boxW, boxH);
+
+  fill(0);
+  stroke(COLORS.yellow);
+  strokeWeight(borderSize);
+  rect(boxX, boxY, boxW, boxH);
+
+  noStroke();
+  let textX = boxX + paddingX;
+  let textShadeOffset = max(2, 5 * scaleValue);
   for (let i = 0; i < lines.length; i++) {
+    let lineY = firstTextY + i * lineHeight;
+    fill(0, 210);
+    text(lines[i], textX + textShadeOffset, lineY + textShadeOffset);
     fill(COLORS.pink);
-    text(lines[i], centerX + 2, startY + i * lineHeight + 2);
+    text(lines[i], textX + 3 * scaleValue, lineY + 3 * scaleValue);
     fill(255);
-    text(lines[i], centerX, startY + i * lineHeight);
+    text(lines[i], textX, lineY);
   }
 
+  drawingContext.restore();
   pop();
+
+  return { boxX, boxY, boxW, boxH, scaleValue };
+}
+
+function getSharedDialogueMaxLineWidth(lines) {
+  return lines.reduce((widest, line) => max(widest, textWidth(line)), 0);
 }
 
 function getFinalScrollLimit() {

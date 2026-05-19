@@ -1380,16 +1380,6 @@ nav.topnav ul li.active a:hover::before{
    directly beneath the <h2> heading and above the .section-content
    paragraph block, without modifying the HTML order. Flexbox + order
    lets us rearrange visually while keeping the DOM unchanged. */
-.page-section#page-s3 .section-inner{
-  display:flex;
-  flex-direction:column;
-  align-items:flex-start;
-}
-.page-section#page-s3 .section-inner > h2              { order:1; }
-.page-section#page-s3 .section-inner > .genart-card    { order:2; }
-.page-section#page-s3 .section-inner > .section-content{ order:3; }
-.page-section#page-s3 .section-inner > .ref-box        { order:4; }
-
 /* ─────────────────────────────────────────────────────────
    SECTION REVEAL — on-scroll paper slide-in.
    When a .page-section receives .active (added by pages.js on
@@ -1691,6 +1681,9 @@ nav.topnav ul li.active a:hover::before{
   text-align:center;
   opacity:.7;
   animation:bounce 1.6s ease-in-out infinite;
+}
+.loop-note + .ref-box{
+  margin-top:72px;
 }
 
 /* small screens */

@@ -4925,9 +4925,9 @@ function drawSpec1DialogueBox(
     : COLOR_PINK;
 
   ctx.save();
-  ctx.font = `400 ${size}px ${P5_DIALOG_FONT_STACK}`;
+  ctx.font = `700 ${size}px ${P5_DIALOG_FONT_STACK}`;
   if ("letterSpacing" in ctx) ctx.letterSpacing = "2.5px";
-  ctx.textAlign = "center";
+  ctx.textAlign = "left";
   ctx.textBaseline = "middle";
 
   const maxTextWidth = maxWidth ? max(1, maxWidth - paddingX * 2) : null;
@@ -4946,11 +4946,13 @@ function drawSpec1DialogueBox(
   const top = centerY - boxHeight * 0.5;
 
   ctx.globalAlpha *= opacity;
-  ctx.fillStyle = rgbToRgba(backShadowColor, 1);
-  ctx.fillRect(left + shadowStep * 2, top + shadowStep * 2, boxWidth, boxHeight);
-  ctx.fillStyle = rgbToRgba(frontShadowColor, 1);
-  ctx.fillRect(left + shadowStep, top + shadowStep, boxWidth, boxHeight);
-  ctx.fillStyle = "rgba(0,0,0,0.72)";
+  ctx.fillStyle = "rgba(0,0,0,0)";
+  ctx.strokeStyle = rgbToRgba(backShadowColor, 1);
+  ctx.lineWidth = borderWidth;
+  ctx.strokeRect(left + shadowStep, top + shadowStep, boxWidth, boxHeight);
+  ctx.strokeStyle = rgbToRgba(frontShadowColor, 1);
+  ctx.strokeRect(left + shadowStep * 0.55, top + shadowStep * 0.35, boxWidth, boxHeight);
+  ctx.fillStyle = "rgba(0,0,0,1)";
   ctx.fillRect(left, top, boxWidth, boxHeight);
   ctx.lineWidth = borderWidth;
   ctx.strokeStyle = rgbToRgba(borderColor, 1);
@@ -4959,12 +4961,15 @@ function drawSpec1DialogueBox(
   ctx.shadowBlur = 0;
   ctx.shadowOffsetX = 0;
   ctx.shadowOffsetY = 0;
-  const firstLineY = top + paddingTop + size * 0.62;
+  const textX = left + paddingX;
+  const firstLineY = top + paddingTop + lineHeight * 0.5;
   for (let i = 0; i < lines.length; i += 1) {
+    ctx.fillStyle = "rgba(0,0,0,0.82)";
+    ctx.fillText(lines[i], textX + 5, firstLineY + i * lineHeight + 5);
     ctx.fillStyle = rgbToRgba(textShadowColor, 1);
-    ctx.fillText(lines[i], centerX + 2, firstLineY + i * lineHeight + 2);
+    ctx.fillText(lines[i], textX + 3, firstLineY + i * lineHeight + 3);
     ctx.fillStyle = rgbToRgba(textColor, 1);
-    ctx.fillText(lines[i], centerX, firstLineY + i * lineHeight);
+    ctx.fillText(lines[i], textX, firstLineY + i * lineHeight);
   }
   ctx.restore();
 }
