@@ -13,19 +13,20 @@
   // ── Registry of available sounds ─────────────────────────
   // `pool` = how many Audio instances to preload; higher = more
   // overlapping triggers possible without clipping the previous.
-  // ── Per-page-load variant pick ──
-  // The website ships with 7 click variants (web_click1.wav …
-  // web_click7.wav) and 8 hover variants (web_hover1.wav …
-  // web_hover8.wav). Pick one of each on every page load so repeat
-  // visits sound subtly different — keeps the UI feeling alive
-  // without per-click randomization (which would feel chaotic on a
-  // single page session).
-  const clickVariant = 1 + Math.floor(Math.random() * 7);
-  const hoverVariant = 1 + Math.floor(Math.random() * 8);
+  // Click and hover use variant lists so each interaction can pick a
+  // fresh file instead of reusing one page-load choice.
+  const clickVariants = Array.from(
+    { length: 7 },
+    (_, index) => `sounds/web_click${index + 1}.wav`
+  );
+  const hoverVariants = Array.from(
+    { length: 8 },
+    (_, index) => `sounds/web_hover${index + 1}.wav`
+  );
 
   const SOUNDS = {
-    click:       { src: `sounds/web_click${clickVariant}.wav`, pool: 4, vol: 0.55 },
-    hover:       { src: `sounds/web_hover${hoverVariant}.wav`, pool: 6, vol: 0.30 },
+    click:       { srcs: clickVariants,                         pool: 4, vol: 0.55 },
+    hover:       { srcs: hoverVariants,                         pool: 6, vol: 0.30 },
     pageturn:    { src: 'sounds/web_pageturn.wav',           pool: 2, vol: 0.60 },
     burn:        { src: 'sounds/nanagenart_burn.wav',        pool: 5, vol: 0.70 },
     gartHover:   { src: 'sounds/nanagenart_hover.wav',       pool: 4, vol: 0.35 },
@@ -60,14 +61,26 @@
   // ── Build pools ──────────────────────────────────────────
   for (const name in SOUNDS) {
     const cfg = SOUNDS[name];
-    pools[name] = [];
-    rr[name] = 0;
-    for (let i = 0; i < cfg.pool; i++) {
-      const a = new Audio(cfg.src);
-      a.preload = 'auto';
-      a.volume  = cfg.vol;
-      pools[name].push(a);
+    const srcs = Array.isArray(cfg.srcs) ? cfg.srcs : [cfg.src];
+
+    if (srcs.length > 1) {
+      pools[name] = srcs.map(src => buildAudioPool(src, cfg));
+      rr[name] = srcs.map(() => 0);
+    } else {
+      pools[name] = buildAudioPool(srcs[0], cfg);
+      rr[name] = 0;
     }
+  }
+
+  function buildAudioPool(src, cfg) {
+    const pool = [];
+    for (let i = 0; i < cfg.pool; i++) {
+      const a = new Audio(src);
+      a.preload = 'auto';
+      a.volume = cfg.vol;
+      pool.push(a);
+    }
+    return pool;
   }
 
   // ── Core play function ───────────────────────────────────
@@ -76,10 +89,25 @@
   // returned a rejected promise" case silently.
   function play(name) {
     if (!soundOn) return;
-    const pool = pools[name];
+    const cfg = SOUNDS[name];
+    let pool = pools[name];
     if (!pool) return;
-    const idx = rr[name];
-    rr[name] = (idx + 1) % pool.length;
+
+    let rrBucket = rr[name];
+    let variantIndex = null;
+    if (Array.isArray(cfg && cfg.srcs) && Array.isArray(pool[0])) {
+      variantIndex = Math.floor(Math.random() * pool.length);
+      pool = pool[variantIndex];
+      rrBucket = rr[name][variantIndex];
+    }
+
+    const idx = rrBucket;
+    if (variantIndex === null) {
+      rr[name] = (idx + 1) % pool.length;
+    } else {
+      rr[name][variantIndex] = (idx + 1) % pool.length;
+    }
+
     const a = pool[idx];
     try {
       a.currentTime = 0;

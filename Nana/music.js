@@ -27,18 +27,26 @@
   const BPM   = 100 + Math.floor(Math.random() * 60);   // 100–160
   const BEAT  = 60 / BPM;
   const ROOTS = [110, 123.47, 130.81, 146.83, 164.81, 174.61, 196.00];
-  const ROOT  = ROOTS[Math.floor(Math.random() * ROOTS.length)];
   const INTERVALS = [1, 1.189, 1.335, 1.498, 1.782, 2.0];
 
-  function makePool(){
+  function pickRoot(previousRoot){
+    let nextRoot = previousRoot;
+    while (nextRoot === previousRoot && ROOTS.length > 1) {
+      nextRoot = ROOTS[Math.floor(Math.random() * ROOTS.length)];
+    }
+    return nextRoot;
+  }
+
+  function makePool(root){
     const pool = [];
     for (const iv of INTERVALS){
-      pool.push(ROOT * iv);
-      pool.push(ROOT * iv * 0.5);
+      pool.push(root * iv);
+      pool.push(root * iv * 0.5);
     }
     return pool;
   }
-  const NOTE_POOL = makePool();
+  let currentRoot = pickRoot(null);
+  let notePool = makePool(currentRoot);
   const DETUNE_CENTS = (Math.random() * 14) - 7;
 
   function generateRiff(){
@@ -48,15 +56,67 @@
     let prev = -1;
     for (let i = 0; i < len; i++){
       let idx;
-      do { idx = Math.floor(Math.random() * NOTE_POOL.length); }
-      while (idx === prev && NOTE_POOL.length > 1);
+      do { idx = Math.floor(Math.random() * notePool.length); }
+      while (idx === prev && notePool.length > 1);
       prev = idx;
       const dur = DURATIONS[Math.floor(Math.random() * DURATIONS.length)];
-      riff.push([NOTE_POOL[idx], dur]);
+      riff.push([notePool[idx], dur]);
     }
     return riff;
   }
-  const RIFF = generateRiff();
+  const RIFF_CHANGE_SECONDS = 4;
+  let currentRiff = generateRiff();
+  let nextRiffChangeTime = RIFF_CHANGE_SECONDS;
+
+  function maybeChangeRiff(time){
+    if (time < nextRiffChangeTime) return;
+    currentRoot = pickRoot(currentRoot);
+    notePool = makePool(currentRoot);
+    currentRiff = generateRiff();
+    stepIndex = 0;
+    nextRiffChangeTime = time + RIFF_CHANGE_SECONDS;
+  }
+
+  const BEAT_PATTERNS = [
+    {
+      kick:  [1,0,1,0],
+      snare: [0,1,0,1],
+      hat:   [1,1,1,1],
+    },
+    {
+      kick:  [1,0,0,1],
+      snare: [0,1,0,0],
+      hat:   [1,1,1,0],
+    },
+    {
+      kick:  [1,1,0,0],
+      snare: [0,0,1,0],
+      hat:   [1,1,0,1],
+    },
+    {
+      kick:  [1,0,0,0],
+      snare: [0,1,0,1],
+      hat:   [1,0,1,1],
+    },
+  ];
+  let beatPatternIndex = Math.floor(Math.random() * BEAT_PATTERNS.length);
+  let drumStepIndex = 0;
+  let nextDrumTime = 0;
+  let nextBeatPatternChangeStep = chooseBeatPatternChangeStep();
+
+  function chooseBeatPatternChangeStep(){
+    return drumStepIndex + 4 * (1 + Math.floor(Math.random() * 2));
+  }
+
+  function maybeChangeBeatPattern(){
+    if (drumStepIndex < nextBeatPatternChangeStep) return;
+    let nextIndex = beatPatternIndex;
+    while (nextIndex === beatPatternIndex && BEAT_PATTERNS.length > 1) {
+      nextIndex = Math.floor(Math.random() * BEAT_PATTERNS.length);
+    }
+    beatPatternIndex = nextIndex;
+    nextBeatPatternChangeStep = chooseBeatPatternChangeStep();
+  }
 
   // ─── AudioContext lazy init (autoplay policy) ───────────────
   let ctx          = null;
@@ -106,10 +166,6 @@
 
   function scheduleKick(time){
     if (!ctx) return;
-    // Only on beat boundaries
-    const beatPos = Math.round(time / BEAT);
-    if (Math.abs(time - beatPos * BEAT) >= 0.025) return;
-
     const osc  = ctx.createOscillator();
     const gain = ctx.createGain();
     osc.type = 'sine';
@@ -122,26 +178,48 @@
     osc.start(time); osc.stop(time + 0.15);
   }
 
-  function scheduleHat(time, beats){
+  function scheduleSnare(time){
     if (!ctx) return;
-    // White noise burst, twice per beat
-    const hats = beats * 2;
-    for (let i = 0; i < hats; i++){
-      const t = time + i * (BEAT / 2);
-      const buffer = ctx.createBuffer(1, 1024, ctx.sampleRate);
-      const data   = buffer.getChannelData(0);
-      for (let j = 0; j < data.length; j++) data[j] = Math.random() * 2 - 1;
-      const noise  = ctx.createBufferSource();
-      noise.buffer = buffer; noise.loop = true;
-      const gain   = ctx.createGain();
-      gain.gain.setValueAtTime(0, t);
-      gain.gain.linearRampToValueAtTime(0.15, t + 0.001);
-      gain.gain.linearRampToValueAtTime(0, t + 0.02);
-      const hp = ctx.createBiquadFilter();
-      hp.type = 'highpass'; hp.frequency.value = 6000;
-      noise.connect(hp); hp.connect(gain); gain.connect(masterGain);
-      noise.start(t); noise.stop(t + 0.03);
-    }
+    const buffer = ctx.createBuffer(1, 2048, ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let j = 0; j < data.length; j++) data[j] = Math.random() * 2 - 1;
+    const noise = ctx.createBufferSource();
+    noise.buffer = buffer;
+    const gain = ctx.createGain();
+    gain.gain.setValueAtTime(0, time);
+    gain.gain.linearRampToValueAtTime(0.32, time + 0.002);
+    gain.gain.linearRampToValueAtTime(0, time + 0.08);
+    const bp = ctx.createBiquadFilter();
+    bp.type = 'bandpass'; bp.frequency.value = 1800; bp.Q.value = 0.7;
+    noise.connect(bp); bp.connect(gain); gain.connect(masterGain);
+    noise.start(time); noise.stop(time + 0.10);
+  }
+
+  function scheduleHat(time){
+    if (!ctx) return;
+    const buffer = ctx.createBuffer(1, 1024, ctx.sampleRate);
+    const data   = buffer.getChannelData(0);
+    for (let j = 0; j < data.length; j++) data[j] = Math.random() * 2 - 1;
+    const noise  = ctx.createBufferSource();
+    noise.buffer = buffer; noise.loop = true;
+    const gain   = ctx.createGain();
+    gain.gain.setValueAtTime(0, time);
+    gain.gain.linearRampToValueAtTime(0.15, time + 0.001);
+    gain.gain.linearRampToValueAtTime(0, time + 0.02);
+    const hp = ctx.createBiquadFilter();
+    hp.type = 'highpass'; hp.frequency.value = 6000;
+    noise.connect(hp); hp.connect(gain); gain.connect(masterGain);
+    noise.start(time); noise.stop(time + 0.03);
+  }
+
+  function scheduleDrumStep(time){
+    maybeChangeBeatPattern();
+    const pattern = BEAT_PATTERNS[beatPatternIndex];
+    const step = drumStepIndex % pattern.kick.length;
+    if (pattern.kick[step]) scheduleKick(time);
+    if (pattern.snare[step]) scheduleSnare(time);
+    if (pattern.hat[step]) scheduleHat(time);
+    drumStepIndex++;
   }
 
   // ─── Lookahead scheduler ────────────────────────────────────
@@ -149,13 +227,16 @@
     if (!isPlaying || !ctx) return;
     const AHEAD = 0.10;
     while (nextStepTime < ctx.currentTime + AHEAD){
-      const [freq, beats] = RIFF[stepIndex % RIFF.length];
+      maybeChangeRiff(nextStepTime);
+      const [freq, beats] = currentRiff[stepIndex % currentRiff.length];
       const dur = beats * BEAT;
       scheduleNote(freq, nextStepTime, dur);
-      scheduleKick(nextStepTime);
-      scheduleHat(nextStepTime, beats);
       nextStepTime += dur;
       stepIndex++;
+    }
+    while (nextDrumTime < ctx.currentTime + AHEAD){
+      scheduleDrumStep(nextDrumTime);
+      nextDrumTime += BEAT;
     }
     lookaheadId = setTimeout(scheduleLoop, 25);
   }
@@ -166,8 +247,15 @@
     if (ctx.state === 'suspended') ctx.resume();
     if (isPlaying) return;
     isPlaying    = true;
+    currentRoot  = pickRoot(currentRoot);
+    notePool     = makePool(currentRoot);
+    currentRiff  = generateRiff();
     stepIndex    = 0;
+    drumStepIndex = 0;
     nextStepTime = ctx.currentTime + 0.05;
+    nextRiffChangeTime = nextStepTime + RIFF_CHANGE_SECONDS;
+    nextDrumTime = nextStepTime;
+    nextBeatPatternChangeStep = chooseBeatPatternChangeStep();
     scheduleLoop();
   }
   function stopMusic(){
