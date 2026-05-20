@@ -1808,6 +1808,7 @@ function getTextBoxTransitionProgress() {
 }
 
 function drawTopTextBoxMessage(message, alphaValue, offsetY, phase, promptText = null) {
+  const displayMessage = String(message).toUpperCase();
   const scaleValue = getResponsiveScale(0.58, 1);
   const marginX = isPhoneLayout() ? 18 : TEXT_BOX_MARGIN_X * scaleValue;
   const paddingX = max(18, TEXT_BOX_TEXT_PADDING_X * scaleValue);
@@ -1825,11 +1826,11 @@ function drawTopTextBoxMessage(message, alphaValue, offsetY, phase, promptText =
   let fontSize = max(isPhoneLayout() ? 18 : 24, TEXT_BOX_TEXT_SIZE * scaleValue);
   textSize(fontSize);
   const minFontSize = isPhoneLayout() ? 10 : 12;
-  let textLines = wrapTextBoxMessage(message, maxBoxW - paddingX * 2);
+  let textLines = wrapTextBoxMessage(displayMessage, maxBoxW - paddingX * 2);
   while (getMaxTextLineWidth(textLines) > maxBoxW - paddingX * 2 && fontSize > minFontSize) {
     fontSize -= 1;
     textSize(fontSize);
-    textLines = wrapTextBoxMessage(message, maxBoxW - paddingX * 2);
+    textLines = wrapTextBoxMessage(displayMessage, maxBoxW - paddingX * 2);
   }
 
   const lineHeight = fontSize * 1.08;
@@ -3258,4 +3259,3 @@ function buildFallingRectChipCuts() {
 
   return cuts;
 }
-

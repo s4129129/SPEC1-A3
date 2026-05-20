@@ -6902,12 +6902,20 @@ function drawSoftShadowIntroText(
     return;
   }
 
-  const size = max(12, textSizePx);
+  const compactDialogue =
+    isPreviewMode() ||
+    getResponsiveEntityScale() <= PHONE_ENTITY_SCALE ||
+    min(width, height) <= 420;
+  const sizeMultiplier = compactDialogue ? (isPreviewMode() ? 0.64 : 0.78) : 1;
+  const size = max(compactDialogue ? 16 : 12, textSizePx * sizeMultiplier);
+  const compactMaxWidth = compactDialogue ? min(width - 28, width * 0.86) : null;
   drawSpec1DialogueBox(message, centerX, centerY, size, alpha, {
-    paddingX: size * 1.25,
-    paddingY: size * 0.78,
-    shadowStep: max(5, size * 0.34),
+    paddingX: size * (compactDialogue ? 0.82 : 1.25),
+    paddingY: size * (compactDialogue ? 0.46 : 0.78),
+    shadowStep: max(compactDialogue ? 3 : 5, size * (compactDialogue ? 0.18 : 0.34)),
     borderWidth: max(2, size * 0.11),
+    maxWidth: compactMaxWidth,
+    lineHeight: size * (compactDialogue ? 1.08 : 1.35),
   });
 }
 
@@ -8240,6 +8248,13 @@ function getWorldSize() {
         : null;
     const bounds = wrapper ? wrapper.getBoundingClientRect() : null;
     if (bounds && bounds.width > 0 && bounds.height > 0) {
+      if (isPreviewMode()) {
+        return {
+          width: max(1, floor(bounds.width)),
+          height: max(1, floor(bounds.height)),
+        };
+      }
+
       return {
         width: max(320, floor(bounds.width)),
         height: max(320, floor(bounds.height)),
